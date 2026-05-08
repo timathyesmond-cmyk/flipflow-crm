@@ -1,0 +1,144 @@
+{
+  "name": "Deal",
+  "type": "object",
+  "properties": {
+    "property_address": {
+      "type": "string",
+      "description": "Full property address"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "lead",
+        "contacted",
+        "under_contract",
+        "assigned",
+        "closed",
+        "dead"
+      ],
+      "default": "lead",
+      "description": "Current deal stage"
+    },
+    "deal_type": {
+      "type": "string",
+      "enum": [
+        "assignment",
+        "double_close",
+        "novation"
+      ],
+      "default": "assignment"
+    },
+    "asking_price": {
+      "type": "number",
+      "description": "Seller asking price"
+    },
+    "offer_price": {
+      "type": "number",
+      "description": "Our offer price"
+    },
+    "arv": {
+      "type": "number",
+      "description": "After Repair Value"
+    },
+    "repair_estimate": {
+      "type": "number",
+      "description": "Estimated repair costs"
+    },
+    "assignment_fee": {
+      "type": "number",
+      "description": "Assignment fee / profit"
+    },
+    "buyer_price": {
+      "type": "number",
+      "description": "Price to end buyer"
+    },
+    "seller_name": {
+      "type": "string"
+    },
+    "seller_phone": {
+      "type": "string"
+    },
+    "seller_email": {
+      "type": "string"
+    },
+    "buyer_name": {
+      "type": "string"
+    },
+    "buyer_phone": {
+      "type": "string"
+    },
+    "buyer_email": {
+      "type": "string"
+    },
+    "lead_source": {
+      "type": "string",
+      "enum": [
+        "driving_for_dollars",
+        "direct_mail",
+        "cold_calling",
+        "referral",
+        "mls",
+        "auction",
+        "online_marketing",
+        "other"
+      ],
+      "description": "How the lead was generated"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "single_family",
+        "multi_family",
+        "townhouse",
+        "condo",
+        "land",
+        "commercial",
+        "other"
+      ],
+      "default": "single_family"
+    },
+    "bedrooms": {
+      "type": "number"
+    },
+    "bathrooms": {
+      "type": "number"
+    },
+    "sqft": {
+      "type": "number"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "contract_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "closing_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium"
+    }
+  },
+  "required": [
+    "property_address",
+    "stage"
+  ]
+}

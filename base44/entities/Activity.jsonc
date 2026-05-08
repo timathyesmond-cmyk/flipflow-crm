@@ -1,0 +1,32 @@
+{
+  "name": "Activity",
+  "type": "object",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "Related deal ID"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "note",
+        "call",
+        "email",
+        "meeting",
+        "offer_made",
+        "contract_signed",
+        "stage_change",
+        "other"
+      ],
+      "default": "note"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "deal_id",
+    "type",
+    "description"
+  ]
+}
