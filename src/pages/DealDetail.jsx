@@ -8,14 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ArrowLeft, Pencil, Trash2, MapPin, DollarSign, User, Phone, Mail,
-  Calendar, Home, Ruler, BedDouble, Bath, Loader2, AlertTriangle
+  Calendar, Home, Ruler, BedDouble, Bath, Loader2, AlertTriangle, Bell
 } from 'lucide-react';
+import { toast } from 'sonner';
+import { addDays, format } from 'date-fns';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 import DealFormDialog from '@/components/deals/DealFormDialog';
 import ActivityFeed from '@/components/deals/ActivityFeed';
 
@@ -90,11 +91,23 @@ export default function DealDetail() {
   });
 
   const handleStageChange = (newStage) => {
-    updateMutation.mutate({ stage: newStage });
+    const updates = { stage: newStage };
+
+    if (newStage === 'under_contract') {
+      const followUpDate = format(addDays(new Date(), 3), 'yyyy-MM-dd');
+      updates.follow_up_date = followUpDate;
+      toast.success(`Follow-up reminder set for ${format(addDays(new Date(), 3), 'MMM d, yyyy')}`, {
+        description: 'You\'ll see the reminder on this deal.',
+        icon: '🔔',
+      });
+    }
+
+    updateMutation.mutate(updates);
     base44.entities.Activity.create({
       deal_id: id,
       type: 'stage_change',
       description: `Stage changed to ${stageConfig[newStage]?.label || newStage}`
+        + (newStage === 'under_contract' ? ` — follow-up reminder set for ${format(addDays(new Date(), 3), 'MMM d, yyyy')}` : '')
     });
   };
 
@@ -177,6 +190,29 @@ export default function DealDetail() {
         </div>
       </div>
 
+      {/* Follow-up reminder banner */}
+      {deal.follow_up_date && (
+        <div className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2.5">
+            <Bell className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-amber-800">Follow-up Reminder</p>
+              <p className="text-xs text-amber-700">
+                {new Date(deal.follow_up_date) < new Date()
+                  ? `Overdue — was scheduled for ${format(new Date(deal.follow_up_date), 'MMM d, yyyy')}`
+                  : `Due ${format(new Date(deal.follow_up_date), 'EEEE, MMM d, yyyy')}`}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => updateMutation.mutate({ follow_up_date: null })}
+            className="text-xs text-amber-600 hover:text-amber-800 font-medium underline underline-offset-2 flex-shrink-0"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Content grid */}
       <div className="grid lg:grid-cols-3 gap-5">
         {/* Left column */}
@@ -195,6 +231,7 @@ export default function DealDetail() {
               <InfoRow icon={Calendar} label="Deal Type" value={dealTypeLabels[deal.deal_type]} />
               {deal.contract_date && <InfoRow icon={Calendar} label="Contract" value={format(new Date(deal.contract_date), 'MMM d, yyyy')} />}
               {deal.closing_date && <InfoRow icon={Calendar} label="Closing" value={format(new Date(deal.closing_date), 'MMM d, yyyy')} />}
+              {deal.follow_up_date && <InfoRow icon={Bell} label="Follow-up" value={format(new Date(deal.follow_up_date), 'MMM d, yyyy')} />}
             </CardContent>
           </Card>
 

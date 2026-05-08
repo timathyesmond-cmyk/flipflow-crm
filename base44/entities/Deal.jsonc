@@ -38,28 +38,22 @@
       "default": "assignment"
     },
     "asking_price": {
-      "type": "number",
-      "description": "Seller asking price"
+      "type": "number"
     },
     "offer_price": {
-      "type": "number",
-      "description": "Our offer price"
+      "type": "number"
     },
     "arv": {
-      "type": "number",
-      "description": "After Repair Value"
+      "type": "number"
     },
     "repair_estimate": {
-      "type": "number",
-      "description": "Estimated repair costs"
+      "type": "number"
     },
     "assignment_fee": {
-      "type": "number",
-      "description": "Assignment fee / profit"
+      "type": "number"
     },
     "buyer_price": {
-      "type": "number",
-      "description": "Price to end buyer"
+      "type": "number"
     },
     "seller_name": {
       "type": "string"
@@ -90,8 +84,7 @@
         "auction",
         "online_marketing",
         "other"
-      ],
-      "description": "How the lead was generated"
+      ]
     },
     "property_type": {
       "type": "string",
@@ -125,6 +118,11 @@
     "closing_date": {
       "type": "string",
       "format": "date"
+    },
+    "follow_up_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Follow-up reminder date"
     },
     "priority": {
       "type": "string",
