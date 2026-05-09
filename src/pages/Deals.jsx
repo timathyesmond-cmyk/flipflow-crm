@@ -35,6 +35,8 @@ export default function Deals() {
   const [view, setView] = useState('board');
   const [search, setSearch] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
+  const [dealTypeFilter, setDealTypeFilter] = useState('all');
+  const [cityFilter, setCityFilter] = useState('all');
   const queryClient = useQueryClient();
 
   const { data: deals = [], isLoading } = useQuery({
@@ -50,12 +52,16 @@ export default function Deals() {
     },
   });
 
+  const cities = [...new Set(deals.map(d => d.city).filter(Boolean))].sort();
+
   const filtered = deals.filter(d => {
     const matchSearch = !search || d.property_address?.toLowerCase().includes(search.toLowerCase()) ||
       d.city?.toLowerCase().includes(search.toLowerCase()) ||
       d.seller_name?.toLowerCase().includes(search.toLowerCase());
     const matchStage = stageFilter === 'all' || d.stage === stageFilter;
-    return matchSearch && matchStage;
+    const matchType = dealTypeFilter === 'all' || d.deal_type === dealTypeFilter;
+    const matchCity = cityFilter === 'all' || d.city === cityFilter;
+    return matchSearch && matchStage && matchType && matchCity;
   });
 
   if (isLoading) {
@@ -107,6 +113,28 @@ export default function Deals() {
             <SelectItem value="assigned">Assigned</SelectItem>
             <SelectItem value="closed">Closed</SelectItem>
             <SelectItem value="dead">Dead</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={dealTypeFilter} onValueChange={setDealTypeFilter}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="All Types" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="assignment">Assignment</SelectItem>
+            <SelectItem value="double_close">Double Close</SelectItem>
+            <SelectItem value="novation">Novation</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={cityFilter} onValueChange={setCityFilter}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="All Cities" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Cities</SelectItem>
+            {cities.map(city => (
+              <SelectItem key={city} value={city}>{city}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <div className="flex border rounded-lg overflow-hidden">
