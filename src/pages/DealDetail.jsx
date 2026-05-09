@@ -8,8 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ArrowLeft, Pencil, Trash2, MapPin, DollarSign, User, Phone, Mail,
-  Calendar, Home, Ruler, BedDouble, Bath, Loader2, AlertTriangle, Bell
+  Calendar, Home, Ruler, BedDouble, Bath, Loader2, AlertTriangle, Bell, FileDown
 } from 'lucide-react';
+import { generateDealPDF } from '@/utils/generateDealPDF';
 import { toast } from 'sonner';
 import { addDays, format } from 'date-fns';
 import {
@@ -167,6 +168,9 @@ export default function DealDetail() {
               <SelectItem value="dead">Dead</SelectItem>
             </SelectContent>
           </Select>
+          <Button variant="outline" size="sm" onClick={() => generateDealPDF(deal)}>
+            <FileDown className="w-3.5 h-3.5 mr-1" /> PDF
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setShowEdit(true)}>
             <Pencil className="w-3.5 h-3.5 mr-1" /> Edit
           </Button>
