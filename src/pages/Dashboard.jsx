@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import StatCard from '@/components/dashboard/StatCard';
 import PipelineChart from '@/components/dashboard/PipelineChart';
 import RecentDeals from '@/components/dashboard/RecentDeals';
+import MonthlyProfitChart from '@/components/dashboard/MonthlyProfitChart';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -60,6 +61,9 @@ export default function Dashboard() {
         <PipelineChart deals={deals} />
         <RecentDeals deals={deals} />
       </div>
+
+      {/* Monthly Profit */}
+      <MonthlyProfitChart deals={deals} />
 
       {/* Pipeline value */}
       {pipelineValue > 0 && (
