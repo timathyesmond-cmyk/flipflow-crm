@@ -13,7 +13,7 @@ import Contacts from './pages/Contacts';
 import DealsMap from './pages/DealsMap';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated, authChecked } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
@@ -29,10 +29,15 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
+  }
+
+  // Redirect to login if auth check is done and user is not authenticated
+  if (authChecked && !isAuthenticated) {
+    navigateToLogin();
+    return null;
   }
 
   // Render the main app
