@@ -1,18 +1,37 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, LayoutGrid, List, Loader2 } from 'lucide-react';
+import { Plus, Search, LayoutGrid, List, Loader2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StageColumn from '@/components/deals/StageColumn';
 import DealCard from '@/components/deals/DealCard';
 import DealFormDialog from '@/components/deals/DealFormDialog';
+import ImportDialog from '@/components/ImportDialog';
+
+const DEAL_FIELDS = [
+  { key: 'property_address', required: true }, { key: 'city' }, { key: 'state' }, { key: 'zip' },
+  { key: 'stage' }, { key: 'deal_type' }, { key: 'asking_price', type: 'number' },
+  { key: 'offer_price', type: 'number' }, { key: 'arv', type: 'number' },
+  { key: 'repair_estimate', type: 'number' }, { key: 'assignment_fee', type: 'number' },
+  { key: 'seller_name' }, { key: 'seller_phone' }, { key: 'seller_email' },
+  { key: 'buyer_name' }, { key: 'buyer_phone' }, { key: 'buyer_email' },
+  { key: 'lead_source' }, { key: 'notes' },
+];
+const DEAL_SAMPLE = {
+  property_address: '123 Main St', city: 'Miami', state: 'FL', zip: '33101',
+  stage: 'lead', deal_type: 'assignment', asking_price: 200000,
+  offer_price: 150000, arv: 280000, repair_estimate: 30000, assignment_fee: 10000,
+  seller_name: 'Jane Doe', seller_phone: '555-5678', seller_email: 'jane@example.com',
+  buyer_name: '', buyer_phone: '', buyer_email: '', lead_source: 'cold_calling', notes: '',
+};
 
 const stages = ['lead', 'contacted', 'under_contract', 'assigned', 'closed', 'dead'];
 
 export default function Deals() {
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [view, setView] = useState('board');
   const [search, setSearch] = useState('');
   const [stageFilter, setStageFilter] = useState('all');
@@ -55,9 +74,14 @@ export default function Deals() {
           <h1 className="text-2xl font-bold tracking-tight">Deals</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{deals.length} total deal{deals.length !== 1 ? 's' : ''}</p>
         </div>
-        <Button className="gap-2" onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4" /> New Deal
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => setShowImport(true)}>
+            <Upload className="w-4 h-4" /> Import
+          </Button>
+          <Button className="gap-2" onClick={() => setShowForm(true)}>
+            <Plus className="w-4 h-4" /> New Deal
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -124,6 +148,15 @@ export default function Deals() {
           )}
         </div>
       )}
+
+      <ImportDialog
+        open={showImport}
+        onOpenChange={setShowImport}
+        entityName="Deal"
+        fields={DEAL_FIELDS}
+        sampleRow={DEAL_SAMPLE}
+        onSuccess={() => queryClient.invalidateQueries({ queryKey: ['deals'] })}
+      />
 
       <DealFormDialog
         open={showForm}

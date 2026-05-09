@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User } from 'lucide-react';
+import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,13 @@ import {
 } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import ContactFormDialog from '@/components/contacts/ContactFormDialog';
+import ImportDialog from '@/components/ImportDialog';
+
+const CONTACT_FIELDS = [
+  { key: 'name', required: true }, { key: 'type' }, { key: 'phone' },
+  { key: 'email' }, { key: 'company' }, { key: 'notes' },
+];
+const CONTACT_SAMPLE = { name: 'John Smith', type: 'buyer', phone: '555-1234', email: 'john@example.com', company: 'ABC LLC', notes: '' };
 
 const typeColors = {
   buyer: 'bg-blue-100 text-blue-700',
@@ -23,6 +30,7 @@ const typeColors = {
 
 export default function Contacts() {
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -76,9 +84,14 @@ export default function Contacts() {
           <h1 className="text-2xl font-bold tracking-tight">Contacts</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{contacts.length} contact{contacts.length !== 1 ? 's' : ''}</p>
         </div>
-        <Button className="gap-2" onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4" /> Add Contact
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => setShowImport(true)}>
+            <Upload className="w-4 h-4" /> Import
+          </Button>
+          <Button className="gap-2" onClick={() => setShowForm(true)}>
+            <Plus className="w-4 h-4" /> Add Contact
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -164,6 +177,15 @@ export default function Contacts() {
           </p>
         )}
       </div>
+
+      <ImportDialog
+        open={showImport}
+        onOpenChange={setShowImport}
+        entityName="Contact"
+        fields={CONTACT_FIELDS}
+        sampleRow={CONTACT_SAMPLE}
+        onSuccess={() => queryClient.invalidateQueries({ queryKey: ['contacts'] })}
+      />
 
       <ContactFormDialog
         open={showForm}
