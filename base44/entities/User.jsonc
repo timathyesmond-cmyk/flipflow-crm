@@ -1,0 +1,19 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user"
+    },
+    "trial_start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp when the user's 7-day free trial started"
+    }
+  }
+}
