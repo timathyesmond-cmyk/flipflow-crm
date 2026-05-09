@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DragDropContext } from '@hello-pangea/dnd';
 import { Plus, Search, LayoutGrid, List, Loader2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,6 +52,18 @@ export default function Deals() {
       setShowForm(false);
     },
   });
+
+  const stageMutation = useMutation({
+    mutationFn: ({ id, stage }) => base44.entities.Deal.update(id, { stage }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['deals'] }),
+  });
+
+  const handleDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+    if (!destination) return;
+    if (destination.droppableId === source.droppableId) return;
+    stageMutation.mutate({ id: draggableId, stage: destination.droppableId });
+  };
 
   const cities = [...new Set(deals.map(d => d.city).filter(Boolean))].sort();
 
@@ -155,15 +168,17 @@ export default function Deals() {
 
       {/* Board view */}
       {view === 'board' ? (
-        <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 px-6">
-          {stages.filter(s => stageFilter === 'all' || s === stageFilter).map(stage => (
-            <StageColumn
-              key={stage}
-              stage={stage}
-              deals={filtered.filter(d => d.stage === stage)}
-            />
-          ))}
-        </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 px-6">
+            {stages.filter(s => stageFilter === 'all' || s === stageFilter).map(stage => (
+              <StageColumn
+                key={stage}
+                stage={stage}
+                deals={filtered.filter(d => d.stage === stage)}
+              />
+            ))}
+          </div>
+        </DragDropContext>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map(deal => (
