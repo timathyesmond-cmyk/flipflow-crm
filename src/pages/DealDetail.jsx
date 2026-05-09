@@ -20,6 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import DealFormDialog from '@/components/deals/DealFormDialog';
 import ActivityFeed from '@/components/deals/ActivityFeed';
+import DealTimeline from '@/components/deals/DealTimeline';
 import FollowUpEmailDialog from '@/components/deals/FollowUpEmailDialog';
 
 const stageConfig = {
@@ -81,9 +82,16 @@ export default function DealDetail() {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.Deal.update(id, data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['deal', id] });
       queryClient.invalidateQueries({ queryKey: ['deals'] });
+      if (showEdit) {
+        base44.entities.Activity.create({
+          deal_id: id,
+          type: 'other',
+          description: 'Deal details were updated',
+        }).then(() => queryClient.invalidateQueries({ queryKey: ['activities', id] }));
+      }
       setShowEdit(false);
     },
   });
@@ -336,6 +344,15 @@ export default function DealDetail() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Timeline */}
+      <div className="border border-border rounded-2xl p-5">
+        <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-secondary inline-block" />
+          Deal History
+        </h2>
+        <DealTimeline dealId={id} />
       </div>
 
       <DealFormDialog
