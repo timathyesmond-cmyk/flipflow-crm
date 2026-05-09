@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import DealFormDialog from '@/components/deals/DealFormDialog';
 import ActivityFeed from '@/components/deals/ActivityFeed';
+import FollowUpEmailDialog from '@/components/deals/FollowUpEmailDialog';
 
 const stageConfig = {
   lead: { label: 'Lead', color: 'bg-muted text-muted-foreground' },
@@ -67,6 +68,7 @@ export default function DealDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showEdit, setShowEdit] = useState(false);
+  const [emailTarget, setEmailTarget] = useState(null); // { name, email, type }
 
   const { data: deal, isLoading } = useQuery({
     queryKey: ['deal', id],
@@ -239,8 +241,14 @@ export default function DealDetail() {
           <div className="grid sm:grid-cols-2 gap-4">
             {(deal.seller_name || deal.seller_phone || deal.seller_email) && (
               <Card>
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-3 flex flex-row items-center justify-between">
                   <CardTitle className="text-sm">Seller</CardTitle>
+                  {deal.seller_email && (
+                    <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => setEmailTarget({ name: deal.seller_name, email: deal.seller_email, type: 'Seller' })}>
+                      <Mail className="w-3.5 h-3.5" /> Email
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <InfoRow icon={User} label="Name" value={deal.seller_name} />
@@ -251,8 +259,14 @@ export default function DealDetail() {
             )}
             {(deal.buyer_name || deal.buyer_phone || deal.buyer_email) && (
               <Card>
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-3 flex flex-row items-center justify-between">
                   <CardTitle className="text-sm">Buyer</CardTitle>
+                  {deal.buyer_email && (
+                    <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => setEmailTarget({ name: deal.buyer_name, email: deal.buyer_email, type: 'Buyer' })}>
+                      <Mail className="w-3.5 h-3.5" /> Email
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <InfoRow icon={User} label="Name" value={deal.buyer_name} />
@@ -327,6 +341,17 @@ export default function DealDetail() {
         onSave={data => updateMutation.mutate(data)}
         isLoading={updateMutation.isPending}
       />
+
+      {emailTarget && (
+        <FollowUpEmailDialog
+          open={!!emailTarget}
+          onOpenChange={(open) => { if (!open) setEmailTarget(null); }}
+          deal={deal}
+          contactName={emailTarget.name}
+          contactEmail={emailTarget.email}
+          contactType={emailTarget.type}
+        />
+      )}
     </div>
   );
 }
