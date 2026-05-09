@@ -9,6 +9,7 @@ import StatCard from '@/components/dashboard/StatCard';
 import PipelineChart from '@/components/dashboard/PipelineChart';
 import RecentDeals from '@/components/dashboard/RecentDeals';
 import MonthlyProfitChart from '@/components/dashboard/MonthlyProfitChart';
+import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -47,6 +48,9 @@ export default function Dashboard() {
           </Button>
         </Link>
       </div>
+
+      {/* Onboarding */}
+      <OnboardingTutorial />
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
