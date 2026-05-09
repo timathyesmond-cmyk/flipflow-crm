@@ -290,6 +290,21 @@ export default function DealDetail() {
               {!deal.asking_price && !deal.offer_price && !deal.arv && !deal.assignment_fee && (
                 <p className="text-sm text-muted-foreground text-center py-4">No financial data yet</p>
               )}
+              {deal.asking_price > 0 && deal.offer_price > 0 && (
+                <div className="mt-3 pt-3 border-t border-border">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-semibold text-foreground">Est. Profit</span>
+                    <span className={cn(
+                      "text-sm font-bold",
+                      (deal.asking_price - deal.offer_price) >= 0 ? "text-emerald-600" : "text-destructive"
+                    )}>
+                      {(deal.asking_price - deal.offer_price) >= 0 ? '+' : ''}
+                      ${(deal.asking_price - deal.offer_price).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">Asking price − Offer price</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
