@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload } from 'lucide-react';
+import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import ContactFormDialog from '@/components/contacts/ContactFormDialog';
+import BuyerProfileDialog from '@/components/contacts/BuyerProfileDialog';
 import ImportDialog from '@/components/ImportDialog';
 
 const CONTACT_FIELDS = [
@@ -32,6 +33,7 @@ export default function Contacts() {
   const [showForm, setShowForm] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [buyerProfile, setBuyerProfile] = useState(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const queryClient = useQueryClient();
@@ -60,6 +62,14 @@ export default function Contacts() {
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Contact.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['contacts'] }),
+  });
+
+  const buyerProfileMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Contact.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      setBuyerProfile(null);
+    },
   });
 
   const filtered = contacts.filter(c => {
@@ -130,6 +140,11 @@ export default function Contacts() {
                 </div>
               </div>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {contact.type === 'buyer' && (
+                  <button onClick={() => setBuyerProfile(contact)} className="p-1.5 rounded-md hover:bg-muted" title="Buyer Profile">
+                    <UserCheck className="w-3 h-3 text-blue-500" />
+                  </button>
+                )}
                 <button onClick={() => setEditing(contact)} className="p-1.5 rounded-md hover:bg-muted">
                   <Pencil className="w-3 h-3 text-muted-foreground" />
                 </button>
@@ -169,6 +184,34 @@ export default function Contacts() {
                 </div>
               )}
             </div>
+            {contact.type === 'buyer' && (contact.buyer_property_types?.length > 0 || contact.buyer_locations?.length > 0) && (
+              <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
+                {contact.buyer_property_types?.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {contact.buyer_property_types.slice(0, 3).map(pt => (
+                      <span key={pt} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full capitalize">
+                        {pt.replace('_', ' ')}
+                      </span>
+                    ))}
+                    {contact.buyer_property_types.length > 3 && (
+                      <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full">+{contact.buyer_property_types.length - 3}</span>
+                    )}
+                  </div>
+                )}
+                {contact.buyer_locations?.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {contact.buyer_locations.slice(0, 2).map(loc => (
+                      <span key={loc} className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">
+                        📍 {loc}
+                      </span>
+                    ))}
+                    {contact.buyer_locations.length > 2 && (
+                      <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full">+{contact.buyer_locations.length - 2}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         ))}
         {filtered.length === 0 && (
@@ -201,6 +244,16 @@ export default function Contacts() {
         onSave={data => updateMutation.mutate({ id: editing.id, data })}
         isLoading={updateMutation.isPending}
       />
+
+      {buyerProfile && (
+        <BuyerProfileDialog
+          open={!!buyerProfile}
+          onOpenChange={(open) => { if (!open) setBuyerProfile(null); }}
+          contact={buyerProfile}
+          onSave={data => buyerProfileMutation.mutate({ id: buyerProfile.id, data })}
+          isLoading={buyerProfileMutation.isPending}
+        />
+      )}
     </div>
   );
 }

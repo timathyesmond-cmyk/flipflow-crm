@@ -27,6 +27,43 @@
     },
     "notes": {
       "type": "string"
+    },
+    "buyer_property_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Preferred property types for buyer"
+    },
+    "buyer_locations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Preferred cities/states/zip codes"
+    },
+    "buyer_min_beds": {
+      "type": "number",
+      "description": "Minimum bedrooms"
+    },
+    "buyer_max_price": {
+      "type": "number",
+      "description": "Maximum purchase price"
+    },
+    "buyer_min_arv": {
+      "type": "number",
+      "description": "Minimum ARV they target"
+    },
+    "buyer_deal_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Preferred deal types (assignment, double_close, novation)"
+    },
+    "buyer_notes": {
+      "type": "string",
+      "description": "Additional buyer preferences"
     }
   },
   "required": [
