@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Deals from './pages/Deals';
 import DealDetail from './pages/DealDetail';
 import Contacts from './pages/Contacts';
+import DealsMap from './pages/DealsMap';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -42,6 +43,7 @@ const AuthenticatedApp = () => {
         <Route path="/deals" element={<Deals />} />
         <Route path="/deals/:id" element={<DealDetail />} />
         <Route path="/contacts" element={<Contacts />} />
+        <Route path="/map" element={<DealsMap />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
