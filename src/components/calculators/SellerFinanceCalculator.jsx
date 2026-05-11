@@ -61,7 +61,7 @@ export default function SellerFinanceCalculator() {
   const cashflowColor = cashflow !== null ? (cashflow > 0 ? 'text-emerald-600' : 'text-destructive') : 'text-muted-foreground';
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-6">
       <Card>
         <CardHeader className="pb-3"><CardTitle className="text-base">Inputs</CardTitle></CardHeader>
         <CardContent className="space-y-4">

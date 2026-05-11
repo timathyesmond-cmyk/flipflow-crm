@@ -34,7 +34,7 @@ function MAOCalculator() {
   const maoColor = mao !== null ? (mao > 0 ? 'text-emerald-600' : 'text-destructive') : 'text-muted-foreground';
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-6">
       <Card>
         <CardHeader className="pb-3"><CardTitle className="text-base">Inputs</CardTitle></CardHeader>
         <CardContent className="space-y-5">
@@ -110,7 +110,7 @@ function MAOCalculator() {
 
 export default function Calculator() {
   return (
-    <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
           <CalculatorIcon className="w-6 h-6" /> Deal Calculator
@@ -119,11 +119,11 @@ export default function Calculator() {
       </div>
 
       <Tabs defaultValue="mao">
-        <TabsList className="grid grid-cols-4 w-full">
-          <TabsTrigger value="mao">MAO / Wholesale</TabsTrigger>
-          <TabsTrigger value="sub2">Subject-To</TabsTrigger>
-          <TabsTrigger value="sf">Seller Finance</TabsTrigger>
-          <TabsTrigger value="hybrid">Hybrid</TabsTrigger>
+        <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full h-auto gap-1 p-1">
+          <TabsTrigger value="mao" className="text-xs sm:text-sm py-2">MAO / Wholesale</TabsTrigger>
+          <TabsTrigger value="sub2" className="text-xs sm:text-sm py-2">Subject-To</TabsTrigger>
+          <TabsTrigger value="sf" className="text-xs sm:text-sm py-2">Seller Finance</TabsTrigger>
+          <TabsTrigger value="hybrid" className="text-xs sm:text-sm py-2">Hybrid</TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
