@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DragDropContext } from '@hello-pangea/dnd';
-import { Plus, Search, LayoutGrid, List, Loader2, Upload } from 'lucide-react';
+import { Plus, Search, LayoutGrid, List, Loader2, Upload, Trash2, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import StageColumn from '@/components/deals/StageColumn';
 import DealCard from '@/components/deals/DealCard';
 import DealFormDialog from '@/components/deals/DealFormDialog';
 import ImportDialog from '@/components/ImportDialog';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
 
 const DEAL_FIELDS = [
   { key: 'property_address', required: true }, { key: 'city' }, { key: 'state' }, { key: 'zip' },
@@ -38,6 +43,7 @@ export default function Deals() {
   const [stageFilter, setStageFilter] = useState('all');
   const [dealTypeFilter, setDealTypeFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState('all');
+  const [selectedIds, setSelectedIds] = useState(new Set());
   const queryClient = useQueryClient();
 
   const { data: deals = [], isLoading } = useQuery({
@@ -57,6 +63,42 @@ export default function Deals() {
     mutationFn: ({ id, stage }) => base44.entities.Deal.update(id, { stage }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['deals'] }),
   });
+
+  const bulkStageMutation = useMutation({
+    mutationFn: async ({ ids, stage }) => {
+      await Promise.all([...ids].map(id => base44.entities.Deal.update(id, { stage })));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['deals'] });
+      setSelectedIds(new Set());
+    },
+  });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids) => {
+      await Promise.all([...ids].map(id => base44.entities.Deal.delete(id)));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['deals'] });
+      setSelectedIds(new Set());
+    },
+  });
+
+  const toggleSelect = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(d => d.id)));
+    }
+  };
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -180,15 +222,76 @@ export default function Deals() {
           </div>
         </DragDropContext>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map(deal => (
-            <DealCard key={deal.id} deal={deal} />
-          ))}
-          {filtered.length === 0 && (
-            <p className="text-sm text-muted-foreground col-span-full text-center py-12">
-              No deals found. Create your first deal to get started!
-            </p>
+        <div className="space-y-3">
+          {/* Bulk action bar */}
+          {filtered.length > 0 && (
+            <div className="flex items-center gap-3 py-2 px-1">
+              <Checkbox
+                checked={selectedIds.size === filtered.length && filtered.length > 0}
+                onCheckedChange={toggleSelectAll}
+                id="select-all"
+              />
+              <label htmlFor="select-all" className="text-sm text-muted-foreground cursor-pointer select-none">
+                {selectedIds.size > 0 ? `${selectedIds.size} selected` : 'Select all'}
+              </label>
+              {selectedIds.size > 0 && (
+                <div className="flex items-center gap-2 ml-2">
+                  <Select onValueChange={(stage) => bulkStageMutation.mutate({ ids: selectedIds, stage })}>
+                    <SelectTrigger className="h-8 w-44 text-xs">
+                      <SelectValue placeholder="Change stage…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="lead">Lead</SelectItem>
+                      <SelectItem value="contacted">Contacted</SelectItem>
+                      <SelectItem value="under_contract">Under Contract</SelectItem>
+                      <SelectItem value="assigned">Assigned</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                      <SelectItem value="dead">Dead</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-8 text-destructive hover:text-destructive gap-1.5">
+                        <Trash2 className="w-3.5 h-3.5" /> Delete ({selectedIds.size})
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete {selectedIds.size} deal{selectedIds.size !== 1 ? 's' : ''}?</AlertDialogTitle>
+                        <AlertDialogDescription>This will permanently remove the selected deals and cannot be undone.</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => bulkDeleteMutation.mutate(selectedIds)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )}
+            </div>
           )}
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map(deal => (
+              <DealCard
+                key={deal.id}
+                deal={deal}
+                selectable
+                selected={selectedIds.has(deal.id)}
+                onSelect={toggleSelect}
+              />
+            ))}
+            {filtered.length === 0 && (
+              <p className="text-sm text-muted-foreground col-span-full text-center py-12">
+                No deals found. Create your first deal to get started!
+              </p>
+            )}
+          </div>
         </div>
       )}
 
