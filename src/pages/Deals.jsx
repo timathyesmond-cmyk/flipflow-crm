@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DragDropContext } from '@hello-pangea/dnd';
-import { Plus, Search, LayoutGrid, List, Loader2, Upload, Trash2, CheckSquare } from 'lucide-react';
+import { Plus, Search, LayoutGrid, List, Loader2, Upload, Trash2, CheckSquare, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -109,6 +109,16 @@ export default function Deals() {
 
   const cities = [...new Set(deals.map(d => d.city).filter(Boolean))].sort();
 
+  const exportCSV = () => {
+    const cols = ['property_address','city','state','zip','stage','deal_type','asking_price','offer_price','arv','repair_estimate','assignment_fee','seller_name','seller_phone','seller_email','buyer_name','buyer_phone','buyer_email','lead_source','notes'];
+    const rows = [cols.join(','), ...filtered.map(d => cols.map(c => JSON.stringify(d[c] ?? '')).join(','))];
+    const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `deals-export-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  };
+
   const filtered = deals.filter(d => {
     const matchSearch = !search || d.property_address?.toLowerCase().includes(search.toLowerCase()) ||
       d.city?.toLowerCase().includes(search.toLowerCase()) ||
@@ -136,6 +146,9 @@ export default function Deals() {
           <p className="text-sm text-muted-foreground mt-0.5">{deals.length} total deal{deals.length !== 1 ? 's' : ''}</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" className="gap-2" onClick={exportCSV}>
+            <Download className="w-4 h-4" /> Export CSV
+          </Button>
           <Button variant="outline" className="gap-2" onClick={() => setShowImport(true)}>
             <Upload className="w-4 h-4" /> Import
           </Button>
