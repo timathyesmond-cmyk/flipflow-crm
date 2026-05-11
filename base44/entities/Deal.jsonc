@@ -137,6 +137,13 @@
         "urgent"
       ],
       "default": "medium"
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of uploaded property photo URLs"
     }
   },
   "required": [
