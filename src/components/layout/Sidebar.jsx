@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings } from 'lucide-react';
+import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings, Lightbulb } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 import GlobalSearch from './GlobalSearch';
@@ -11,6 +11,7 @@ const navItems = [
   { label: 'Contacts', path: '/contacts', icon: Users },
   { label: 'Map', path: '/map', icon: Map },
   { label: 'Calculator', path: '/calculator', icon: CalculatorIcon },
+  { label: 'Suggestions', path: '/suggestions', icon: Lightbulb },
   { label: 'Settings', path: '/settings', icon: Settings },
 ];
 

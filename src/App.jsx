@@ -13,6 +13,7 @@ import Contacts from './pages/Contacts';
 import DealsMap from './pages/DealsMap';
 import Calculator from './pages/Calculator';
 import Settings from './pages/Settings';
+import Suggestions from './pages/Suggestions';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated, authChecked } = useAuth();
@@ -53,6 +54,7 @@ const AuthenticatedApp = () => {
         <Route path="/map" element={<DealsMap />} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/suggestions" element={<Suggestions />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

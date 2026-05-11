@@ -1,0 +1,58 @@
+{
+  "name": "Suggestion",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short title for the suggestion"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the suggestion"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "feature",
+        "improvement",
+        "bug_fix",
+        "ui_ux",
+        "other"
+      ],
+      "default": "feature",
+      "description": "Category of the suggestion"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "under_review",
+        "planned",
+        "completed",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "upvotes": {
+      "type": "number",
+      "default": 0
+    },
+    "upvoted_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of user emails who upvoted"
+    },
+    "submitter_name": {
+      "type": "string"
+    },
+    "submitter_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "description"
+  ]
+}
