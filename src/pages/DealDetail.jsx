@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import DealFormDialog from '@/components/deals/DealFormDialog';
-import ActivityFeed from '@/components/deals/ActivityFeed';
 import DealTimeline from '@/components/deals/DealTimeline';
 import FollowUpEmailDialog from '@/components/deals/FollowUpEmailDialog';
 import TaskReminderCard from '@/components/deals/TaskReminderCard';
@@ -359,23 +358,14 @@ export default function DealDetail() {
             isSaving={updateMutation.isPending}
           />
 
-          {/* Activity */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ActivityFeed dealId={id} />
-            </CardContent>
-          </Card>
         </div>
       </div>
 
-      {/* Timeline */}
+      {/* Unified Timeline */}
       <div className="border border-border rounded-2xl p-5">
         <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-secondary inline-block" />
-          Deal History
+          Deal History & Activity
         </h2>
         <DealTimeline dealId={id} />
       </div>
