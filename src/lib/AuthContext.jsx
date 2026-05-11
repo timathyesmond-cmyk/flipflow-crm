@@ -98,6 +98,16 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
       setAuthChecked(true);
+
+      // Track new sign-ups (only once per user)
+      const trackingKey = `signed_up_tracked_${currentUser.id}`;
+      if (!localStorage.getItem(trackingKey)) {
+        base44.analytics.track({
+          eventName: "user_signed_up",
+          properties: { email: currentUser.email }
+        });
+        localStorage.setItem(trackingKey, "true");
+      }
     } catch (error) {
       console.error('User auth check failed:', error);
       setIsLoadingAuth(false);
