@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ProfileSection from '@/components/settings/ProfileSection';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -74,9 +75,11 @@ export default function Settings() {
         <SettingsIcon className="w-6 h-6" />
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground">Manage your email templates for deals</p>
+          <p className="text-sm text-muted-foreground">Manage your profile and email templates</p>
         </div>
       </div>
+
+      <ProfileSection />
 
       {/* Email Templates Section */}
       <div className="space-y-4">

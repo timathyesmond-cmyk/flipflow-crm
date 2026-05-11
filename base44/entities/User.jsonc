@@ -10,10 +10,21 @@
       ],
       "default": "user"
     },
-    "trial_start_date": {
+    "profile_photo": {
       "type": "string",
-      "format": "date-time",
-      "description": "ISO timestamp when the user's 7-day free trial started"
+      "description": "URL to user profile photo"
+    },
+    "phone": {
+      "type": "string",
+      "description": "User phone number"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company or business name"
+    },
+    "website": {
+      "type": "string",
+      "description": "Personal or business website URL"
     }
   }
 }
