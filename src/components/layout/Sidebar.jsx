@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, HandCoins, Users, Map, Menu, X, LogOut } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
+import GlobalSearch from './GlobalSearch';
 
 const navItems = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -45,8 +46,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
+        {/* Search */}
+        <div className="px-3 pb-2">
+          <GlobalSearch />
+        </div>
+
         {/* Nav */}
-        <nav className="flex-1 px-3 space-y-1 mt-4">
+        <nav className="flex-1 px-3 space-y-1 mt-2">
           {navItems.map(item => {
             const isActive = location.pathname === item.path || 
               (item.path !== '/' && location.pathname.startsWith(item.path));

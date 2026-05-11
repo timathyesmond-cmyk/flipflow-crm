@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import GlobalSearch from './GlobalSearch';
 import { Menu } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useTrial } from '@/hooks/useTrial';
@@ -21,11 +22,12 @@ export default function AppLayout() {
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-md border-b border-border px-4 h-14 flex items-center">
-        <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 rounded-lg hover:bg-muted">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-md border-b border-border px-4 h-14 flex items-center gap-3">
+        <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 rounded-lg hover:bg-muted flex-shrink-0">
           <Menu className="w-5 h-5" />
         </button>
-        <span className="ml-3 font-semibold text-sm">DealFlow</span>
+        <span className="font-semibold text-sm flex-shrink-0">DealFlow</span>
+        <GlobalSearch className="flex-1" />
       </div>
 
       {/* Main content */}
