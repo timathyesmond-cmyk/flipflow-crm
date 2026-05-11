@@ -178,6 +178,11 @@ export default function DealDetail() {
               <SelectItem value="dead">Dead</SelectItem>
             </SelectContent>
           </Select>
+          {deal.seller_email && (
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setEmailTarget({ name: deal.seller_name, email: deal.seller_email, type: 'Seller' })}>
+              <Mail className="w-3.5 h-3.5" /> Email Seller
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={() => generateDealPDF(deal)}>
             <FileDown className="w-3.5 h-3.5 mr-1" /> PDF
           </Button>
