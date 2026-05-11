@@ -22,6 +22,7 @@ import DealFormDialog from '@/components/deals/DealFormDialog';
 import ActivityFeed from '@/components/deals/ActivityFeed';
 import DealTimeline from '@/components/deals/DealTimeline';
 import FollowUpEmailDialog from '@/components/deals/FollowUpEmailDialog';
+import TaskReminderCard from '@/components/deals/TaskReminderCard';
 
 const stageConfig = {
   lead: { label: 'Lead', color: 'bg-muted text-muted-foreground' },
@@ -333,6 +334,22 @@ export default function DealDetail() {
               )}
             </CardContent>
           </Card>
+
+          {/* Task Reminder */}
+          <TaskReminderCard
+            deal={deal}
+            onSave={(data) => {
+              updateMutation.mutate(data);
+              if (data.follow_up_date) {
+                base44.entities.Activity.create({
+                  deal_id: id,
+                  type: 'other',
+                  description: `Follow-up reminder set for ${format(new Date(data.follow_up_date), 'MMM d, yyyy')}${data.follow_up_note ? ` — "${data.follow_up_note}"` : ''}`,
+                }).then(() => queryClient.invalidateQueries({ queryKey: ['activities', id] }));
+              }
+            }}
+            isSaving={updateMutation.isPending}
+          />
 
           {/* Activity */}
           <Card>

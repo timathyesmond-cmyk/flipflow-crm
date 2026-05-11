@@ -124,6 +124,10 @@
       "format": "date",
       "description": "Follow-up reminder date"
     },
+    "follow_up_note": {
+      "type": "string",
+      "description": "Note for what to follow up on"
+    },
     "priority": {
       "type": "string",
       "enum": [
