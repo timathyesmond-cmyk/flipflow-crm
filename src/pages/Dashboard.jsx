@@ -11,6 +11,7 @@ import RecentDeals from '@/components/dashboard/RecentDeals';
 import MonthlyProfitChart from '@/components/dashboard/MonthlyProfitChart';
 import MonthlyGrowthChart from '@/components/dashboard/MonthlyGrowthChart';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
+import TodayFollowUps from '@/components/dashboard/TodayFollowUps';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -61,15 +62,20 @@ export default function Dashboard() {
         <StatCard label="Total Profit" value={`$${totalProfit.toLocaleString()}`} icon={DollarSign} />
       </div>
 
-      {/* Charts + Recent */}
+      {/* Follow-Ups + Pipeline */}
       <div className="grid lg:grid-cols-2 gap-4">
+        <TodayFollowUps deals={deals} />
         <PipelineChart deals={deals} />
-        <RecentDeals deals={deals} />
       </div>
 
-      {/* Monthly Growth + Profit */}
+      {/* Charts + Recent */}
       <div className="grid lg:grid-cols-2 gap-4">
+        <RecentDeals deals={deals} />
         <MonthlyGrowthChart deals={deals} />
+      </div>
+
+      {/* Monthly Profit */}
+      <div className="grid lg:grid-cols-2 gap-4">
         <MonthlyProfitChart deals={deals} />
       </div>
 
