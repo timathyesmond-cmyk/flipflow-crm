@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calculator, DollarSign, TrendingUp, Wrench, Info } from 'lucide-react';
+import { Calculator as CalculatorIcon, DollarSign, TrendingUp, Wrench, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,7 +40,7 @@ export default function Calculator() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <Calculator className="w-6 h-6" /> Deal Calculator
+          <CalculatorIcon className="w-6 h-6" /> Deal Calculator
         </h1>
         <p className="text-sm text-muted-foreground mt-1">Calculate your Maximum Allowable Offer (MAO)</p>
       </div>
