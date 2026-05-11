@@ -145,6 +145,23 @@ export default function Contacts() {
                     <UserCheck className="w-3 h-3 text-blue-500" />
                   </button>
                 )}
+                {contact.email && (
+                  <a
+                    href={`mailto:${contact.email}?subject=${encodeURIComponent(
+                      contact.type === 'seller'
+                        ? 'Following Up on Your Property'
+                        : 'New Deal Opportunity for You'
+                    )}&body=${encodeURIComponent(
+                      contact.type === 'seller'
+                        ? `Hi ${contact.name},\n\nI wanted to follow up regarding your property. I'm interested in making a fair cash offer and would love to connect at your convenience.\n\nPlease feel free to reach out anytime.\n\nBest regards`
+                        : `Hi ${contact.name},\n\nI have a new deal opportunity that I think would be a great fit for your buying criteria. I'd love to share the details with you.\n\nLet me know if you're interested and I'll send over the full property info.\n\nBest regards`
+                    )}`}
+                    className="p-1.5 rounded-md hover:bg-muted"
+                    title="Send Email"
+                  >
+                    <Mail className="w-3 h-3 text-primary" />
+                  </a>
+                )}
                 <button onClick={() => setEditing(contact)} className="p-1.5 rounded-md hover:bg-muted">
                   <Pencil className="w-3 h-3 text-muted-foreground" />
                 </button>
