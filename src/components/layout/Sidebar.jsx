@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, HandCoins, Users, Map, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, HandCoins, Users, Map, Menu, X, LogOut, Calculator as CalculatorIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 import GlobalSearch from './GlobalSearch';
@@ -10,6 +10,7 @@ const navItems = [
   { label: 'Deals', path: '/deals', icon: HandCoins },
   { label: 'Contacts', path: '/contacts', icon: Users },
   { label: 'Map', path: '/map', icon: Map },
+  { label: 'Calculator', path: '/calculator', icon: CalculatorIcon },
 ];
 
 export default function Sidebar({ isOpen, setIsOpen }) {

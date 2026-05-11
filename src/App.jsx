@@ -11,6 +11,7 @@ import Deals from './pages/Deals';
 import DealDetail from './pages/DealDetail';
 import Contacts from './pages/Contacts';
 import DealsMap from './pages/DealsMap';
+import Calculator from './pages/Calculator';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated, authChecked } = useAuth();
@@ -49,6 +50,7 @@ const AuthenticatedApp = () => {
         <Route path="/deals/:id" element={<DealDetail />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/map" element={<DealsMap />} />
+        <Route path="/calculator" element={<Calculator />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
