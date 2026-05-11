@@ -9,6 +9,7 @@ import StatCard from '@/components/dashboard/StatCard';
 import PipelineChart from '@/components/dashboard/PipelineChart';
 import RecentDeals from '@/components/dashboard/RecentDeals';
 import MonthlyProfitChart from '@/components/dashboard/MonthlyProfitChart';
+import MonthlyGrowthChart from '@/components/dashboard/MonthlyGrowthChart';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 export default function Dashboard() {
@@ -66,8 +67,11 @@ export default function Dashboard() {
         <RecentDeals deals={deals} />
       </div>
 
-      {/* Monthly Profit */}
-      <MonthlyProfitChart deals={deals} />
+      {/* Monthly Growth + Profit */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        <MonthlyGrowthChart deals={deals} />
+        <MonthlyProfitChart deals={deals} />
+      </div>
 
       {/* Pipeline value */}
       {pipelineValue > 0 && (
