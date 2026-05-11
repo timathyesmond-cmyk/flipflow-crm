@@ -36,6 +36,8 @@ export default function Contacts() {
   const [buyerProfile, setBuyerProfile] = useState(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [propTypeFilter, setPropTypeFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('');
   const queryClient = useQueryClient();
 
   const { data: contacts = [], isLoading } = useQuery({
@@ -76,7 +78,9 @@ export default function Contacts() {
     const matchSearch = !search || c.name?.toLowerCase().includes(search.toLowerCase()) ||
       c.email?.toLowerCase().includes(search.toLowerCase()) || c.company?.toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === 'all' || c.type === typeFilter;
-    return matchSearch && matchType;
+    const matchPropType = propTypeFilter === 'all' || c.buyer_property_types?.includes(propTypeFilter);
+    const matchLocation = !locationFilter || c.buyer_locations?.some(loc => loc.toLowerCase().includes(locationFilter.toLowerCase()));
+    return matchSearch && matchType && matchPropType && matchLocation;
   });
 
   if (isLoading) {
@@ -104,8 +108,8 @@ export default function Contacts() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[180px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Search contacts..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
@@ -122,6 +126,24 @@ export default function Contacts() {
             <SelectItem value="other">Other</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={propTypeFilter} onValueChange={setPropTypeFilter}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Property Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Property Types</SelectItem>
+            <SelectItem value="single_family">Single Family</SelectItem>
+            <SelectItem value="multi_family">Multi Family</SelectItem>
+            <SelectItem value="townhouse">Townhouse</SelectItem>
+            <SelectItem value="condo">Condo</SelectItem>
+            <SelectItem value="land">Land</SelectItem>
+            <SelectItem value="commercial">Commercial</SelectItem>
+          </SelectContent>
+        </Select>
+        <div className="relative min-w-[160px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input placeholder="Filter by location..." value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="pl-9" />
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
