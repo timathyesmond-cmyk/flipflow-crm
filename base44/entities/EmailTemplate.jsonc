@@ -1,0 +1,46 @@
+{
+  "name": "EmailTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name shown in dropdown"
+    },
+    "deal_stage": {
+      "type": "string",
+      "enum": [
+        "any",
+        "lead",
+        "contacted",
+        "under_contract",
+        "assigned",
+        "closed"
+      ],
+      "default": "any",
+      "description": "Deal stage this template applies to"
+    },
+    "audience": {
+      "type": "string",
+      "enum": [
+        "seller",
+        "buyer",
+        "both"
+      ],
+      "default": "seller",
+      "description": "Who this template is for"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject line"
+    },
+    "body": {
+      "type": "string",
+      "description": "Email body. Use {{name}}, {{address}}, {{offer_price}}, {{closing_date}} as placeholders."
+    }
+  },
+  "required": [
+    "name",
+    "subject",
+    "body"
+  ]
+}

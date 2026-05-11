@@ -12,6 +12,7 @@ import DealDetail from './pages/DealDetail';
 import Contacts from './pages/Contacts';
 import DealsMap from './pages/DealsMap';
 import Calculator from './pages/Calculator';
+import Settings from './pages/Settings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated, authChecked } = useAuth();
@@ -51,6 +52,7 @@ const AuthenticatedApp = () => {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/map" element={<DealsMap />} />
         <Route path="/calculator" element={<Calculator />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

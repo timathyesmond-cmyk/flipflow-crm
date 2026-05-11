@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -36,12 +37,25 @@ const TEMPLATES = {
   },
 };
 
+function applyPlaceholders(text, contactName, deal) {
+  return (text || '')
+    .replace(/\{\{name\}\}/g, contactName || '')
+    .replace(/\{\{address\}\}/g, deal?.property_address || '')
+    .replace(/\{\{offer_price\}\}/g, deal?.offer_price ? `$${deal.offer_price.toLocaleString()}` : '')
+    .replace(/\{\{closing_date\}\}/g, deal?.closing_date || '');
+}
+
 export default function FollowUpEmailDialog({ open, onOpenChange, deal, contactName, contactEmail, contactType }) {
   const [templateKey, setTemplateKey] = useState('follow_up');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [sending, setSending] = useState(false);
   const [initialized, setInitialized] = useState(false);
+
+  const { data: customTemplates = [] } = useQuery({
+    queryKey: ['email_templates'],
+    queryFn: () => base44.entities.EmailTemplate.list('-created_date'),
+  });
 
   useEffect(() => {
     if (open && !initialized) {
@@ -55,9 +69,19 @@ export default function FollowUpEmailDialog({ open, onOpenChange, deal, contactN
 
   const applyTemplate = (key) => {
     setTemplateKey(key);
-    const tpl = TEMPLATES[key];
-    setSubject(tpl.subject(deal));
-    setBody(tpl.body(contactName || contactType, deal));
+    // Check built-in first
+    if (TEMPLATES[key]) {
+      const tpl = TEMPLATES[key];
+      setSubject(tpl.subject(deal));
+      setBody(tpl.body(contactName || contactType, deal));
+    } else {
+      // Custom template — key is the id
+      const tpl = customTemplates.find(t => t.id === key);
+      if (tpl) {
+        setSubject(applyPlaceholders(tpl.subject, contactName || contactType, deal));
+        setBody(applyPlaceholders(tpl.body, contactName || contactType, deal));
+      }
+    }
   };
 
   const handleSend = async () => {
@@ -95,9 +119,18 @@ export default function FollowUpEmailDialog({ open, onOpenChange, deal, contactN
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="__builtin__" disabled className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">— Built-in —</SelectItem>
                 {Object.entries(TEMPLATES).map(([key, tpl]) => (
                   <SelectItem key={key} value={key}>{tpl.label}</SelectItem>
                 ))}
+                {customTemplates.length > 0 && (
+                  <>
+                    <SelectItem value="__custom__" disabled className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">— Custom —</SelectItem>
+                    {customTemplates.map(t => (
+                      <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                    ))}
+                  </>
+                )}
               </SelectContent>
             </Select>
           </div>
