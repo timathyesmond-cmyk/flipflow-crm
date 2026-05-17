@@ -49,7 +49,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               <HandCoins className="w-5 h-5 text-sidebar-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-bold text-base tracking-tight text-white">DealFlow</h1>
+              <h1 className="font-bold text-base tracking-tight text-white">FlipFlow</h1>
               <p className="text-[10px] uppercase tracking-widest text-sidebar-foreground/50">Wholesale CRM</p>
             </div>
           </div>
