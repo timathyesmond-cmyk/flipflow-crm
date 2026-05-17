@@ -10,21 +10,14 @@
       ],
       "default": "user"
     },
-    "profile_photo": {
-      "type": "string",
-      "description": "URL to user profile photo"
+    "is_banned": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this user is banned from the platform"
     },
-    "phone": {
+    "ban_reason": {
       "type": "string",
-      "description": "User phone number"
-    },
-    "company": {
-      "type": "string",
-      "description": "Company or business name"
-    },
-    "website": {
-      "type": "string",
-      "description": "Personal or business website URL"
+      "description": "Reason for the ban"
     }
   }
 }
