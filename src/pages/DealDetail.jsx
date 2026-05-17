@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ArrowLeft, Pencil, Trash2, MapPin, DollarSign, User, Phone, Mail,
-  Calendar, Home, Ruler, BedDouble, Bath, Loader2, AlertTriangle, Bell, FileDown, MessageSquare
+  Calendar, Home, Ruler, BedDouble, Bath, Loader2, AlertTriangle, Bell, FileDown
 } from 'lucide-react';
 import { generateDealPDF } from '@/utils/generateDealPDF';
 import { toast } from 'sonner';
@@ -21,7 +21,6 @@ import { cn } from '@/lib/utils';
 import DealFormDialog from '@/components/deals/DealFormDialog';
 import DealTimeline from '@/components/deals/DealTimeline';
 import FollowUpEmailDialog from '@/components/deals/FollowUpEmailDialog';
-import SendTextDialog from '@/components/sms/SendTextDialog';
 import TaskReminderCard from '@/components/deals/TaskReminderCard';
 import PropertyPhotos from '@/components/deals/PropertyPhotos';
 
@@ -73,7 +72,6 @@ export default function DealDetail() {
   const queryClient = useQueryClient();
   const [showEdit, setShowEdit] = useState(false);
   const [emailTarget, setEmailTarget] = useState(null);
-  const [textTarget, setTextTarget] = useState(null); // { name, phone, type }
 
   const { data: deal, isLoading } = useQuery({
     queryKey: ['deal', id],
@@ -184,11 +182,6 @@ export default function DealDetail() {
               <Mail className="w-3.5 h-3.5" /> Email Seller
             </Button>
           )}
-          {deal.seller_phone && (
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setTextTarget({ name: deal.seller_name, phone: deal.seller_phone, type: 'Seller' })}>
-              <MessageSquare className="w-3.5 h-3.5" /> Text Seller
-            </Button>
-          )}
           <Button variant="outline" size="sm" onClick={() => generateDealPDF(deal)}>
             <FileDown className="w-3.5 h-3.5 mr-1" /> PDF
           </Button>
@@ -268,20 +261,12 @@ export default function DealDetail() {
               <Card>
                 <CardHeader className="pb-3 flex flex-row items-center justify-between">
                   <CardTitle className="text-sm">Seller</CardTitle>
-                  <div className="flex gap-1">
-                    {deal.seller_phone && (
-                      <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                        onClick={() => setTextTarget({ name: deal.seller_name, phone: deal.seller_phone, type: 'Seller' })}>
-                        <MessageSquare className="w-3.5 h-3.5" /> Text
-                      </Button>
-                    )}
-                    {deal.seller_email && (
-                      <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                        onClick={() => setEmailTarget({ name: deal.seller_name, email: deal.seller_email, type: 'Seller' })}>
-                        <Mail className="w-3.5 h-3.5" /> Email
-                      </Button>
-                    )}
-                  </div>
+                  {deal.seller_email && (
+                    <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => setEmailTarget({ name: deal.seller_name, email: deal.seller_email, type: 'Seller' })}>
+                      <Mail className="w-3.5 h-3.5" /> Email
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <InfoRow icon={User} label="Name" value={deal.seller_name} />
@@ -294,20 +279,12 @@ export default function DealDetail() {
               <Card>
                 <CardHeader className="pb-3 flex flex-row items-center justify-between">
                   <CardTitle className="text-sm">Buyer</CardTitle>
-                  <div className="flex gap-1">
-                    {deal.buyer_phone && (
-                      <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                        onClick={() => setTextTarget({ name: deal.buyer_name, phone: deal.buyer_phone, type: 'Buyer' })}>
-                        <MessageSquare className="w-3.5 h-3.5" /> Text
-                      </Button>
-                    )}
-                    {deal.buyer_email && (
-                      <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                        onClick={() => setEmailTarget({ name: deal.buyer_name, email: deal.buyer_email, type: 'Buyer' })}>
-                        <Mail className="w-3.5 h-3.5" /> Email
-                      </Button>
-                    )}
-                  </div>
+                  {deal.buyer_email && (
+                    <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => setEmailTarget({ name: deal.buyer_name, email: deal.buyer_email, type: 'Buyer' })}>
+                      <Mail className="w-3.5 h-3.5" /> Email
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <InfoRow icon={User} label="Name" value={deal.buyer_name} />
@@ -400,16 +377,6 @@ export default function DealDetail() {
         onSave={data => updateMutation.mutate(data)}
         isLoading={updateMutation.isPending}
       />
-
-      {textTarget && (
-        <SendTextDialog
-          open={!!textTarget}
-          onOpenChange={(open) => { if (!open) setTextTarget(null); }}
-          toName={textTarget.name}
-          toPhone={textTarget.phone}
-          vars={{ name: textTarget.name, address: deal.property_address, stage: deal.stage }}
-        />
-      )}
 
       {emailTarget && (
         <FollowUpEmailDialog
