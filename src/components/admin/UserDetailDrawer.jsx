@@ -5,10 +5,11 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Ban, CheckCircle, Crown, MapPin, Phone, Mail, Gift, X } from 'lucide-react';
+import { Loader2, Ban, CheckCircle, Crown, MapPin, Phone, Mail, Gift, X, ExternalLink, ChevronDown, ChevronUp, Building2, DollarSign, Calendar, FileText, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
@@ -26,6 +27,175 @@ const stageColors = {
   closed: 'bg-emerald-100 text-emerald-700',
   dead: 'bg-red-100 text-red-600',
 };
+
+function DealRow({ deal }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="rounded-lg border border-border bg-muted/30 overflow-hidden">
+      <div
+        className="flex items-center justify-between px-3 py-2.5 cursor-pointer hover:bg-muted/60 transition-colors"
+        onClick={() => setExpanded(e => !e)}
+      >
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-xs truncate">{deal.property_address}</p>
+          <p className="text-[11px] text-muted-foreground">{deal.city}{deal.state ? `, ${deal.state}` : ''}</p>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+          {deal.assignment_fee > 0 && (
+            <span className="text-xs text-emerald-600 font-semibold">${deal.assignment_fee.toLocaleString()}</span>
+          )}
+          <Badge className={cn("text-[10px] capitalize", stageColors[deal.stage])}>{deal.stage?.replace('_', ' ')}</Badge>
+          {expanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="px-3 pb-3 pt-1 border-t border-border/50 space-y-3 text-xs">
+          {/* Financials */}
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: 'Asking Price', value: deal.asking_price },
+              { label: 'Offer Price', value: deal.offer_price },
+              { label: 'ARV', value: deal.arv },
+              { label: 'Repair Est.', value: deal.repair_estimate },
+              { label: 'Buyer Price', value: deal.buyer_price },
+              { label: 'Assignment Fee', value: deal.assignment_fee },
+            ].map(f => f.value > 0 && (
+              <div key={f.label} className="bg-card rounded p-2">
+                <p className="text-[10px] text-muted-foreground">{f.label}</p>
+                <p className="font-semibold text-emerald-700">${f.value.toLocaleString()}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Property details */}
+          <div className="flex flex-wrap gap-2">
+            {deal.property_type && <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] capitalize">{deal.property_type.replace('_', ' ')}</span>}
+            {deal.deal_type && <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded text-[10px] capitalize">{deal.deal_type.replace('_', ' ')}</span>}
+            {deal.bedrooms && <span className="bg-muted text-muted-foreground px-2 py-0.5 rounded text-[10px]">{deal.bedrooms} bed</span>}
+            {deal.bathrooms && <span className="bg-muted text-muted-foreground px-2 py-0.5 rounded text-[10px]">{deal.bathrooms} bath</span>}
+            {deal.sqft && <span className="bg-muted text-muted-foreground px-2 py-0.5 rounded text-[10px]">{deal.sqft.toLocaleString()} sqft</span>}
+          </div>
+
+          {/* Seller & Buyer */}
+          {(deal.seller_name || deal.seller_phone || deal.seller_email) && (
+            <div className="bg-amber-50 rounded p-2 space-y-0.5">
+              <p className="text-[10px] font-semibold text-amber-700 mb-1">Seller</p>
+              {deal.seller_name && <p className="font-medium">{deal.seller_name}</p>}
+              {deal.seller_phone && <a href={`tel:${deal.seller_phone}`} className="text-muted-foreground hover:text-foreground flex items-center gap-1"><Phone className="w-3 h-3" />{deal.seller_phone}</a>}
+              {deal.seller_email && <a href={`mailto:${deal.seller_email}`} className="text-muted-foreground hover:text-foreground flex items-center gap-1"><Mail className="w-3 h-3" />{deal.seller_email}</a>}
+            </div>
+          )}
+          {(deal.buyer_name || deal.buyer_phone || deal.buyer_email) && (
+            <div className="bg-blue-50 rounded p-2 space-y-0.5">
+              <p className="text-[10px] font-semibold text-blue-700 mb-1">Buyer</p>
+              {deal.buyer_name && <p className="font-medium">{deal.buyer_name}</p>}
+              {deal.buyer_phone && <a href={`tel:${deal.buyer_phone}`} className="text-muted-foreground hover:text-foreground flex items-center gap-1"><Phone className="w-3 h-3" />{deal.buyer_phone}</a>}
+              {deal.buyer_email && <a href={`mailto:${deal.buyer_email}`} className="text-muted-foreground hover:text-foreground flex items-center gap-1"><Mail className="w-3 h-3" />{deal.buyer_email}</a>}
+            </div>
+          )}
+
+          {/* Dates */}
+          <div className="flex flex-wrap gap-2">
+            {deal.contract_date && <span className="text-[10px] text-muted-foreground">📄 Contract: {new Date(deal.contract_date).toLocaleDateString()}</span>}
+            {deal.closing_date && <span className="text-[10px] text-muted-foreground">🔑 Closing: {new Date(deal.closing_date).toLocaleDateString()}</span>}
+            {deal.follow_up_date && <span className="text-[10px] text-amber-600">🔔 Follow-up: {new Date(deal.follow_up_date).toLocaleDateString()}</span>}
+          </div>
+
+          {/* Notes */}
+          {deal.notes && (
+            <div className="bg-muted/50 rounded p-2">
+              <p className="text-[10px] text-muted-foreground mb-0.5">Notes</p>
+              <p className="text-xs">{deal.notes}</p>
+            </div>
+          )}
+
+          <Link
+            to={`/deals/${deal.id}`}
+            className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline font-medium"
+          >
+            <ExternalLink className="w-3 h-3" /> Open Full Deal
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ContactRow({ contact }) {
+  const [expanded, setExpanded] = useState(false);
+  const typeColors = {
+    buyer: 'bg-blue-100 text-blue-700',
+    seller: 'bg-amber-100 text-amber-700',
+    agent: 'bg-purple-100 text-purple-700',
+    contractor: 'bg-emerald-100 text-emerald-700',
+    other: 'bg-muted text-muted-foreground',
+  };
+
+  return (
+    <div className="rounded-lg border border-border bg-muted/30 overflow-hidden">
+      <div
+        className="flex items-center justify-between px-3 py-2.5 cursor-pointer hover:bg-muted/60 transition-colors"
+        onClick={() => setExpanded(e => !e)}
+      >
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-xs">{contact.name}</p>
+          {contact.company && <p className="text-[11px] text-muted-foreground">{contact.company}</p>}
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+          <Badge className={cn("text-[10px] capitalize", typeColors[contact.type])}>{contact.type}</Badge>
+          {expanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="px-3 pb-3 pt-1 border-t border-border/50 space-y-2 text-xs">
+          {contact.phone && (
+            <a href={`tel:${contact.phone}`} className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+              <Phone className="w-3 h-3" /> {contact.phone}
+            </a>
+          )}
+          {contact.email && (
+            <a href={`mailto:${contact.email}`} className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+              <Mail className="w-3 h-3" /> {contact.email}
+            </a>
+          )}
+          {contact.company && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Building2 className="w-3 h-3" /> {contact.company}
+            </div>
+          )}
+          {contact.notes && (
+            <div className="bg-muted/50 rounded p-2 mt-1">
+              <p className="text-[10px] text-muted-foreground mb-0.5">Notes</p>
+              <p>{contact.notes}</p>
+            </div>
+          )}
+          {contact.type === 'buyer' && (
+            <>
+              {contact.buyer_locations?.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {contact.buyer_locations.map(l => <span key={l} className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">📍 {l}</span>)}
+                </div>
+              )}
+              {contact.buyer_property_types?.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {contact.buyer_property_types.map(t => <span key={t} className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full capitalize">{t.replace('_', ' ')}</span>)}
+                </div>
+              )}
+              <div className="flex flex-wrap gap-3 text-muted-foreground">
+                {contact.buyer_max_price > 0 && <span>Max Price: <strong className="text-foreground">${contact.buyer_max_price.toLocaleString()}</strong></span>}
+                {contact.buyer_min_beds > 0 && <span>Min Beds: <strong className="text-foreground">{contact.buyer_min_beds}</strong></span>}
+                {contact.buyer_min_arv > 0 && <span>Min ARV: <strong className="text-foreground">${contact.buyer_min_arv.toLocaleString()}</strong></span>}
+              </div>
+              {contact.buyer_notes && <p className="text-muted-foreground italic">{contact.buyer_notes}</p>}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdated }) {
   const queryClient = useQueryClient();
@@ -274,7 +444,7 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
 
         {/* Deals */}
         <div className="mb-5">
-          <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-muted-foreground" /> Deals ({deals.length})
           </h3>
           {dealsLoading ? (
@@ -282,20 +452,9 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
           ) : deals.length === 0 ? (
             <p className="text-sm text-muted-foreground">No deals yet.</p>
           ) : (
-            <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
               {deals.map(deal => (
-                <div key={deal.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/40 text-sm">
-                  <div>
-                    <p className="font-medium text-xs">{deal.property_address}</p>
-                    <p className="text-xs text-muted-foreground">{deal.city}{deal.state ? `, ${deal.state}` : ''}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {deal.assignment_fee > 0 && (
-                      <span className="text-xs text-emerald-600 font-medium">${deal.assignment_fee.toLocaleString()}</span>
-                    )}
-                    <Badge className={cn("text-[10px]", stageColors[deal.stage])}>{deal.stage}</Badge>
-                  </div>
-                </div>
+                <DealRow key={deal.id} deal={deal} />
               ))}
             </div>
           )}
@@ -303,27 +462,17 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
 
         {/* Contacts */}
         <div>
-          <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-            <Mail className="w-4 h-4 text-muted-foreground" /> Contacts ({contacts.length})
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <User className="w-4 h-4 text-muted-foreground" /> Contacts ({contacts.length})
           </h3>
           {contactsLoading ? (
             <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
           ) : contacts.length === 0 ? (
             <p className="text-sm text-muted-foreground">No contacts yet.</p>
           ) : (
-            <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
               {contacts.map(c => (
-                <div key={c.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/40 text-sm">
-                  <div>
-                    <p className="font-medium text-xs">{c.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{c.type}</p>
-                  </div>
-                  {c.phone && (
-                    <a href={`tel:${c.phone}`} className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
-                      <Phone className="w-3 h-3" /> {c.phone}
-                    </a>
-                  )}
-                </div>
+                <ContactRow key={c.id} contact={c} />
               ))}
             </div>
           )}
