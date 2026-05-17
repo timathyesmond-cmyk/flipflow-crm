@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload, UserCheck, Sparkles, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload, UserCheck, ToggleLeft, ToggleRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import ContactFormDialog from '@/components/contacts/ContactFormDialog';
 import BuyerProfileDialog from '@/components/contacts/BuyerProfileDialog';
 import ImportDialog from '@/components/ImportDialog';
-import MatchingDealsDialog from '@/components/contacts/MatchingDealsDialog';
+
 
 const CONTACT_FIELDS = [
   { key: 'name', required: true }, { key: 'type' }, { key: 'phone' },
@@ -35,7 +35,6 @@ export default function Contacts() {
   const [showImport, setShowImport] = useState(false);
   const [editing, setEditing] = useState(null);
   const [buyerProfile, setBuyerProfile] = useState(null);
-  const [matchingDealsContact, setMatchingDealsContact] = useState(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [propTypeFilter, setPropTypeFilter] = useState('all');
@@ -201,11 +200,6 @@ export default function Contacts() {
                   </button>
                 )}
                 {contact.type === 'buyer' && (
-                  <button onClick={() => setMatchingDealsContact(contact)} className="p-1.5 rounded-md hover:bg-muted" title="View Matching Deals">
-                    <Sparkles className="w-3 h-3 text-amber-500" />
-                  </button>
-                )}
-                {contact.type === 'buyer' && (
                   <button onClick={() => setBuyerProfile(contact)} className="p-1.5 rounded-md hover:bg-muted" title="Buyer Profile">
                     <UserCheck className="w-3 h-3 text-blue-500" />
                   </button>
@@ -326,14 +320,6 @@ export default function Contacts() {
         onSave={data => updateMutation.mutate({ id: editing.id, data })}
         isLoading={updateMutation.isPending}
       />
-
-      {matchingDealsContact && (
-        <MatchingDealsDialog
-          open={!!matchingDealsContact}
-          onOpenChange={(open) => { if (!open) setMatchingDealsContact(null); }}
-          contact={matchingDealsContact}
-        />
-      )}
 
       {buyerProfile && (
         <BuyerProfileDialog
