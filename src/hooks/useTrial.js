@@ -10,8 +10,8 @@ export function useTrial(user) {
   useEffect(() => {
     if (!user) return;
 
-    // Admins are never gated
-    if (user.role === 'admin') {
+    // Admins and gifted members are never gated
+    if (user.role === 'admin' || user.gifted_membership === true) {
       setTrialStatus('active');
       return;
     }
