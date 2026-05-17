@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload, UserCheck, Sparkles } from 'lucide-react';
+import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload, UserCheck, Sparkles, ToggleLeft, ToggleRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -40,6 +40,7 @@ export default function Contacts() {
   const [typeFilter, setTypeFilter] = useState('all');
   const [propTypeFilter, setPropTypeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('');
+  const [buyerStatusFilter, setBuyerStatusFilter] = useState('all'); // 'all' | 'active' | 'inactive'
   const queryClient = useQueryClient();
 
   const { data: contacts = [], isLoading } = useQuery({
@@ -82,7 +83,9 @@ export default function Contacts() {
     const matchType = typeFilter === 'all' || c.type === typeFilter;
     const matchPropType = propTypeFilter === 'all' || c.buyer_property_types?.includes(propTypeFilter);
     const matchLocation = !locationFilter || c.buyer_locations?.some(loc => loc.toLowerCase().includes(locationFilter.toLowerCase()));
-    return matchSearch && matchType && matchPropType && matchLocation;
+    const matchBuyerStatus = buyerStatusFilter === 'all' || c.type !== 'buyer' ||
+      (buyerStatusFilter === 'active' ? c.is_active !== false : c.is_active === false);
+    return matchSearch && matchType && matchPropType && matchLocation && matchBuyerStatus;
   });
 
   if (isLoading) {
@@ -146,6 +149,20 @@ export default function Contacts() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Filter by location..." value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="pl-9" />
         </div>
+        <div className="flex items-center gap-1 border rounded-lg overflow-hidden">
+          {['all', 'active', 'inactive'].map(opt => (
+            <button
+              key={opt}
+              onClick={() => setBuyerStatusFilter(opt)}
+              className={cn(
+                'px-3 py-1.5 text-xs font-medium capitalize transition-colors',
+                buyerStatusFilter === opt ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {opt === 'all' ? 'All Buyers' : opt === 'active' ? '🟢 Active' : '⚫ Inactive'}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -158,12 +175,31 @@ export default function Contacts() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold">{contact.name}</p>
-                  <Badge variant="secondary" className={cn("text-[10px] mt-0.5", typeColors[contact.type])}>
-                    {contact.type}
-                  </Badge>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <Badge variant="secondary" className={cn("text-[10px]", typeColors[contact.type])}>
+                      {contact.type}
+                    </Badge>
+                    {contact.type === 'buyer' && (
+                      <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full font-medium", contact.is_active === false ? 'bg-muted text-muted-foreground' : 'bg-emerald-100 text-emerald-700')}>
+                        {contact.is_active === false ? 'Inactive' : 'Active'}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {contact.type === 'buyer' && (
+                  <button
+                    onClick={() => updateMutation.mutate({ id: contact.id, data: { is_active: contact.is_active === false ? true : false } })}
+                    className="p-1.5 rounded-md hover:bg-muted"
+                    title={contact.is_active === false ? 'Mark as Active' : 'Mark as Inactive'}
+                  >
+                    {contact.is_active === false
+                      ? <ToggleLeft className="w-3 h-3 text-muted-foreground" />
+                      : <ToggleRight className="w-3 h-3 text-emerald-500" />
+                    }
+                  </button>
+                )}
                 {contact.type === 'buyer' && (
                   <button onClick={() => setMatchingDealsContact(contact)} className="p-1.5 rounded-md hover:bg-muted" title="View Matching Deals">
                     <Sparkles className="w-3 h-3 text-amber-500" />

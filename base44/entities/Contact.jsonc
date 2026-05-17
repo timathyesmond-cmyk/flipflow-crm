@@ -28,6 +28,11 @@
     "notes": {
       "type": "string"
     },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this buyer is actively looking"
+    },
     "buyer_property_types": {
       "type": "array",
       "items": {
