@@ -33,5 +33,6 @@
       "format": "date",
       "description": "Date membership was gifted"
     }
-  }
+  },
+  "required": []
 }
