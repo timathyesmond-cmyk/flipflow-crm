@@ -19,18 +19,46 @@ export default function ImportDialog({ open, onOpenChange, entityName, fields, s
   const handleImport = async () => {
     if (!file) return;
     setStatus('uploading');
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    const schema = {
-      type: 'object',
-      properties: Object.fromEntries(fields.map(f => [f.key, { type: f.type || 'string' }]))
-    };
-    const extracted = await base44.integrations.Core.ExtractDataFromUploadedFile({ file_url, json_schema: schema });
-    if (extracted.status !== 'success' || !Array.isArray(extracted.output)) {
+
+    // Parse CSV manually (reliable, no AI needed)
+    const text = await file.text();
+    const lines = text.trim().split(/\r?\n/);
+    if (lines.length < 2) {
       setStatus('error');
-      setResult({ error: extracted.details || 'Could not parse file.' });
+      setResult({ error: 'File appears empty or has no data rows.' });
       return;
     }
-    const records = extracted.output.filter(r => r && Object.keys(r).length > 0);
+
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    const records = lines.slice(1).map(line => {
+      // Handle quoted fields with commas inside
+      const values = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        if (line[i] === '"') { inQuotes = !inQuotes; }
+        else if (line[i] === ',' && !inQuotes) { values.push(current); current = ''; }
+        else { current += line[i]; }
+      }
+      values.push(current);
+
+      const record = {};
+      headers.forEach((h, i) => {
+        const field = fields.find(f => f.key === h);
+        const val = (values[i] ?? '').trim();
+        if (val !== '') {
+          record[h] = field?.type === 'number' ? parseFloat(val) || 0 : val;
+        }
+      });
+      return record;
+    }).filter(r => Object.keys(r).length > 0);
+
+    if (records.length === 0) {
+      setStatus('error');
+      setResult({ error: 'No valid records found in the file.' });
+      return;
+    }
+
     await base44.entities[entityName].bulkCreate(records);
     setStatus('success');
     setResult({ count: records.length });
