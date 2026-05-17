@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload, UserCheck, Sparkles, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Upload, UserCheck, Sparkles, ToggleLeft, ToggleRight, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +15,7 @@ import ContactFormDialog from '@/components/contacts/ContactFormDialog';
 import BuyerProfileDialog from '@/components/contacts/BuyerProfileDialog';
 import ImportDialog from '@/components/ImportDialog';
 import MatchingDealsDialog from '@/components/contacts/MatchingDealsDialog';
+import SendTextDialog from '@/components/sms/SendTextDialog';
 
 const CONTACT_FIELDS = [
   { key: 'name', required: true }, { key: 'type' }, { key: 'phone' },
@@ -41,6 +42,7 @@ export default function Contacts() {
   const [propTypeFilter, setPropTypeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('');
   const [buyerStatusFilter, setBuyerStatusFilter] = useState('all'); // 'all' | 'active' | 'inactive'
+  const [textContact, setTextContact] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: contacts = [], isLoading } = useQuery({
@@ -210,6 +212,11 @@ export default function Contacts() {
                     <UserCheck className="w-3 h-3 text-blue-500" />
                   </button>
                 )}
+                {contact.phone && (
+                  <button onClick={() => setTextContact(contact)} className="p-1.5 rounded-md hover:bg-muted" title="Send Text">
+                    <MessageSquare className="w-3 h-3 text-emerald-500" />
+                  </button>
+                )}
                 {contact.email && (
                   <a
                     href={`mailto:${contact.email}?subject=${encodeURIComponent(
@@ -332,6 +339,16 @@ export default function Contacts() {
           open={!!matchingDealsContact}
           onOpenChange={(open) => { if (!open) setMatchingDealsContact(null); }}
           contact={matchingDealsContact}
+        />
+      )}
+
+      {textContact && (
+        <SendTextDialog
+          open={!!textContact}
+          onOpenChange={(open) => { if (!open) setTextContact(null); }}
+          toName={textContact.name}
+          toPhone={textContact.phone}
+          vars={{ name: textContact.name }}
         />
       )}
 

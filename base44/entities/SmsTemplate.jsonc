@@ -1,0 +1,46 @@
+{
+  "name": "SmsTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name shown in dropdown"
+    },
+    "deal_stage": {
+      "type": "string",
+      "enum": [
+        "any",
+        "lead",
+        "contacted",
+        "under_contract",
+        "assigned",
+        "closed"
+      ],
+      "default": "any",
+      "description": "Auto-send when deal moves to this stage (any = manual only)"
+    },
+    "audience": {
+      "type": "string",
+      "enum": [
+        "seller",
+        "buyer",
+        "contact"
+      ],
+      "default": "seller",
+      "description": "Who this template targets"
+    },
+    "message": {
+      "type": "string",
+      "description": "SMS message body. Use {{name}}, {{address}}, {{stage}} as placeholders."
+    },
+    "auto_send": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically send when deal reaches the specified stage"
+    }
+  },
+  "required": [
+    "name",
+    "message"
+  ]
+}
