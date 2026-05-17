@@ -5,7 +5,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Ban, CheckCircle, Crown, MapPin, Phone, Mail, Building2, DollarSign } from 'lucide-react';
+import { Loader2, Ban, CheckCircle, Crown, MapPin, Phone, Mail, Gift, X } from 'lucide-react';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
@@ -29,6 +30,7 @@ const stageColors = {
 export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdated }) {
   const queryClient = useQueryClient();
   const [banReason, setBanReason] = useState('');
+  const [giftNote, setGiftNote] = useState('');
 
   const { data: deals = [], isLoading: dealsLoading } = useQuery({
     queryKey: ['admin-user-deals', user?.email],
@@ -65,9 +67,25 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
     },
   });
 
+  const giftMutation = useMutation({
+    mutationFn: ({ gift, note }) =>
+      base44.entities.User.update(user.id, {
+        gifted_membership: gift,
+        gifted_membership_note: gift ? note : '',
+        gifted_membership_date: gift ? format(new Date(), 'yyyy-MM-dd') : '',
+      }),
+    onSuccess: (_, { gift }) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success(gift ? '🎁 Free membership gifted!' : 'Membership gift revoked');
+      onUserUpdated?.();
+      setGiftNote('');
+    },
+  });
+
   if (!user) return null;
 
   const isBanned = user.is_banned === true;
+  const hasGiftedMembership = user.gifted_membership === true;
   const totalProfit = deals
     .filter(d => d.stage === 'closed' && d.assignment_fee)
     .reduce((sum, d) => sum + (d.assignment_fee || 0), 0);
@@ -96,6 +114,7 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
             {user.role === 'admin' ? '👑 Admin' : '👤 User'}
           </Badge>
           {isBanned && <Badge className="bg-red-100 text-red-700">🚫 Banned</Badge>}
+          {hasGiftedMembership && <Badge className="bg-emerald-100 text-emerald-700">🎁 Free Member</Badge>}
           {user.email === ADMIN_EMAIL && <Badge className="bg-purple-100 text-purple-700">⭐ Super Admin</Badge>}
           {user.created_date && (
             <Badge variant="outline" className="text-xs">
@@ -103,6 +122,28 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
             </Badge>
           )}
         </div>
+
+        {/* Gifted membership display */}
+        {hasGiftedMembership && (
+          <div className="mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold text-emerald-700 mb-0.5">🎁 Free Membership Active</p>
+              {user.gifted_membership_date && (
+                <p className="text-xs text-emerald-600">Gifted on {new Date(user.gifted_membership_date).toLocaleDateString()}</p>
+              )}
+              {user.gifted_membership_note && (
+                <p className="text-xs text-emerald-600 mt-0.5 italic">"{user.gifted_membership_note}"</p>
+              )}
+            </div>
+            <button
+              onClick={() => giftMutation.mutate({ gift: false })}
+              className="text-xs text-emerald-700 hover:text-red-600 flex items-center gap-1 flex-shrink-0"
+              title="Revoke gift"
+            >
+              <X className="w-3.5 h-3.5" /> Revoke
+            </button>
+          </div>
+        )}
 
         {/* Ban reason display */}
         {isBanned && user.ban_reason && (
@@ -144,6 +185,43 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
               <Crown className="w-3.5 h-3.5" />
               {user.role === 'admin' ? 'Revoke Admin' : 'Make Admin'}
             </Button>
+
+            {/* Gift Membership */}
+            {!hasGiftedMembership ? (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-emerald-600 border-emerald-300 hover:bg-emerald-50">
+                    <Gift className="w-3.5 h-3.5" /> Gift Membership
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Gift free membership to {user.full_name || user.email}?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will mark this user as having a gifted free membership. Add an optional note below.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="my-2 space-y-1.5">
+                    <Label className="text-sm">Note (optional)</Label>
+                    <Textarea
+                      placeholder="e.g. Gifted for beta testing, referral reward..."
+                      value={giftNote}
+                      onChange={e => setGiftNote(e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-emerald-600 text-white hover:bg-emerald-700"
+                      onClick={() => giftMutation.mutate({ gift: true, note: giftNote })}
+                    >
+                      🎁 Gift Membership
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            ) : null}
 
             {/* Ban / Unban */}
             {isBanned ? (

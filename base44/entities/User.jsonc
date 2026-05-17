@@ -18,6 +18,20 @@
     "ban_reason": {
       "type": "string",
       "description": "Reason for the ban"
+    },
+    "gifted_membership": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this user has been gifted a free membership by the admin"
+    },
+    "gifted_membership_note": {
+      "type": "string",
+      "description": "Optional note about why membership was gifted"
+    },
+    "gifted_membership_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date membership was gifted"
     }
   }
 }
