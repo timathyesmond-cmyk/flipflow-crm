@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings, Lightbulb } from 'lucide-react';
+import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings, Lightbulb, Shield } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 import GlobalSearch from './GlobalSearch';
@@ -15,8 +15,17 @@ const navItems = [
   { label: 'Settings', path: '/settings', icon: Settings },
 ];
 
+const ADMIN_EMAIL = 'timathyesmond@gmail.com';
+
 export default function Sidebar({ isOpen, setIsOpen }) {
   const location = useLocation();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then(user => {
+      if (user?.email === ADMIN_EMAIL) setIsAdmin(true);
+    }).catch(() => {});
+  }, []);
 
   return (
     <>
@@ -78,6 +87,26 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             );
           })}
         </nav>
+
+        {/* Admin link — only visible to admin */}
+        {isAdmin && (
+          <div className="px-3 pb-2">
+            <Link
+              to="/admin"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                location.pathname === '/admin'
+                  ? "bg-sidebar-accent text-white"
+                  : "text-sidebar-primary/70 hover:text-sidebar-primary hover:bg-sidebar-accent/50"
+              )}
+            >
+              <Shield className="w-[18px] h-[18px]" />
+              Admin
+              {location.pathname === '/admin' && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-sidebar-primary" />}
+            </Link>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="p-3 border-t border-sidebar-border">
