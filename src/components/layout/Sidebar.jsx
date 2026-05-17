@@ -4,6 +4,7 @@ import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as Calcul
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 import GlobalSearch from './GlobalSearch';
+import StaleDealsNotification from '@/components/notifications/StaleDealsNotification';
 
 const navItems = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -59,8 +60,11 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         </div>
 
         {/* Search */}
-        <div className="px-3 pb-2">
-          <GlobalSearch />
+        <div className="px-3 pb-2 flex items-center gap-2">
+          <div className="flex-1">
+            <GlobalSearch />
+          </div>
+          <StaleDealsNotification />
         </div>
 
         {/* Nav */}
