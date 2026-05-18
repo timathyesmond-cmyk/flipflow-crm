@@ -5,6 +5,7 @@ import MAOCalculator from '@/components/calculators/MAOCalculator';
 import Sub2Calculator from '@/components/calculators/Sub2Calculator';
 import SellerFinanceCalculator from '@/components/calculators/SellerFinanceCalculator';
 import HybridCalculator from '@/components/calculators/HybridCalculator';
+import PurchaseAgreementGenerator from '@/components/calculators/PurchaseAgreementGenerator';
 
 export default function Calculator() {
   return (
@@ -17,11 +18,12 @@ export default function Calculator() {
       </div>
 
       <Tabs defaultValue="mao">
-        <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full h-auto gap-1 p-1">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full h-auto gap-1 p-1">
           <TabsTrigger value="mao" className="text-xs sm:text-sm py-2">MAO / Wholesale</TabsTrigger>
           <TabsTrigger value="sub2" className="text-xs sm:text-sm py-2">Subject-To</TabsTrigger>
           <TabsTrigger value="sf" className="text-xs sm:text-sm py-2">Seller Finance</TabsTrigger>
           <TabsTrigger value="hybrid" className="text-xs sm:text-sm py-2">Hybrid</TabsTrigger>
+          <TabsTrigger value="agreement" className="text-xs sm:text-sm py-2">Purchase Agreement</TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
@@ -29,6 +31,7 @@ export default function Calculator() {
           <TabsContent value="sub2"><Sub2Calculator /></TabsContent>
           <TabsContent value="sf"><SellerFinanceCalculator /></TabsContent>
           <TabsContent value="hybrid"><HybridCalculator /></TabsContent>
+          <TabsContent value="agreement"><PurchaseAgreementGenerator /></TabsContent>
         </div>
       </Tabs>
     </div>
