@@ -2,9 +2,10 @@ import React, { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Download } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Download, Save } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useCalculatorAutoSave } from '@/hooks/useCalculatorAutoSave';
 
 function calcMonthlyPayment(principal, annualRate, termMonths) {
   if (!principal || !termMonths) return 0;
@@ -120,6 +121,14 @@ export default function HybridCalculator() {
 
   const balloonPayment = balloon > 0 ? cbLoan : null; // simplified
 
+  const { matchedDeal, saveStatus } = useCalculatorAutoSave(address, {
+    offer_price: pp || undefined,
+    arv: undefined,
+    repair_estimate: undefined,
+    assignment_fee: af || undefined,
+    buyer_price: totalEntryFee || undefined,
+  });
+
   // Insights
   const insights = [];
   if (cocReturn !== null) {
@@ -194,11 +203,17 @@ export default function HybridCalculator() {
 
       {/* RIGHT: Output Report */}
       <div className="space-y-3">
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between">
+          {matchedDeal && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <Save className="w-3 h-3" />
+              {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? `Saved to "${matchedDeal.property_address}"` : `Linked to "${matchedDeal.property_address}"`}
+            </p>
+          )}
           <Button
             variant="outline"
             size="sm"
-            className="gap-2"
+            className="gap-2 ml-auto"
             onClick={async () => {
               if (!reportRef.current) return;
               const canvas = await html2canvas(reportRef.current, { scale: 2, useCORS: true });
@@ -212,7 +227,7 @@ export default function HybridCalculator() {
             <Download className="w-4 h-4" /> Download PDF
           </Button>
         </div>
-      <div ref={reportRef} className="bg-[#f5f0e8] rounded-2xl p-6 space-y-4 font-mono">
+        <div ref={reportRef} className="bg-[#f5f0e8] rounded-2xl p-6 space-y-4 font-mono">
         {/* Header */}
         <div className="text-center mb-4">
           <h2 className="text-4xl font-black tracking-tight text-foreground">HYBRID</h2>
@@ -276,7 +291,7 @@ export default function HybridCalculator() {
             </div>
           </div>
         )}
-      </div>
+        </div>
       </div>
     </div>
   );

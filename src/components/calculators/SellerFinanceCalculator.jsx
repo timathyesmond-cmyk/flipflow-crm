@@ -3,9 +3,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { AlertTriangle, CheckCircle2, Download } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Download, Save } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useCalculatorAutoSave } from '@/hooks/useCalculatorAutoSave';
 
 function fmt(val, suffix = '') {
   if (val === null || val === undefined || val === '') return '—';
@@ -110,6 +111,12 @@ export default function SellerFinanceCalculator() {
     balloonBalance = principal * Math.pow(1 + r, balloonMo) - monthly * ((Math.pow(1 + r, balloonMo) - 1) / r);
   }
 
+  const { matchedDeal, saveStatus } = useCalculatorAutoSave(address, {
+    offer_price: pp || undefined,
+    assignment_fee: af || undefined,
+    buyer_price: totalEntryFee || undefined,
+  });
+
   const insights = [];
   if (cocReturn !== null) {
     if (cocReturn >= 20) {
@@ -184,8 +191,14 @@ export default function SellerFinanceCalculator() {
 
       {/* RIGHT: Output Report */}
       <div className="space-y-3">
-        <div className="flex justify-end">
-          <Button variant="outline" size="sm" className="gap-2" onClick={handleDownload}>
+        <div className="flex items-center justify-between">
+          {matchedDeal && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <Save className="w-3 h-3" />
+              {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? `Saved to "${matchedDeal.property_address}"` : `Linked to "${matchedDeal.property_address}"`}
+            </p>
+          )}
+          <Button variant="outline" size="sm" className="gap-2 ml-auto" onClick={handleDownload}>
             <Download className="w-4 h-4" /> Download PDF
           </Button>
         </div>

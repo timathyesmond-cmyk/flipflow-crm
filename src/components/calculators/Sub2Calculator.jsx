@@ -2,9 +2,10 @@ import React, { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, CheckCircle2, Download } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Download, Save } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useCalculatorAutoSave } from '@/hooks/useCalculatorAutoSave';
 
 function fmt(val, suffix = '') {
   if (val === null || val === undefined || val === '') return '—';
@@ -103,6 +104,12 @@ export default function Sub2Calculator() {
   const cocReturn = totalEntryFee > 0 && cashflowYr !== null ? (cashflowYr / totalEntryFee) * 100 : null;
   const equityCaptured = pp > 0 && mortBal > 0 ? pp - mortBal : null;
 
+  const { matchedDeal, saveStatus } = useCalculatorAutoSave(address, {
+    offer_price: pp || undefined,
+    assignment_fee: af || undefined,
+    buyer_price: totalEntryFee || undefined,
+  });
+
   // Insights
   const insights = [];
   if (cocReturn !== null) {
@@ -178,8 +185,14 @@ export default function Sub2Calculator() {
 
       {/* RIGHT: Output Report */}
       <div className="space-y-3">
-        <div className="flex justify-end">
-          <Button variant="outline" size="sm" className="gap-2" onClick={handleDownload}>
+        <div className="flex items-center justify-between">
+          {matchedDeal && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <Save className="w-3 h-3" />
+              {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? `Saved to "${matchedDeal.property_address}"` : `Linked to "${matchedDeal.property_address}"`}
+            </p>
+          )}
+          <Button variant="outline" size="sm" className="gap-2 ml-auto" onClick={handleDownload}>
             <Download className="w-4 h-4" /> Download PDF
           </Button>
         </div>

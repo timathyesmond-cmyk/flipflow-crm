@@ -3,9 +3,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { TrendingUp, Wrench, DollarSign, AlertTriangle, CheckCircle2, Download } from 'lucide-react';
+import { TrendingUp, Wrench, DollarSign, AlertTriangle, CheckCircle2, Download, Save } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useCalculatorAutoSave } from '@/hooks/useCalculatorAutoSave';
 
 function fmt(val) {
   if (val === null || val === undefined) return '—';
@@ -58,6 +59,13 @@ export default function MAOCalculator() {
   const equity = arvNum > 0 && mao !== null ? arvNum - mao - repairsNum : null;
   const repairPct = arvNum > 0 ? (repairsNum / arvNum) * 100 : null;
   const profitMargin = arvNum > 0 && mao !== null ? ((arvNum - mao - repairsNum) / arvNum) * 100 : null;
+
+  const { matchedDeal, saveStatus } = useCalculatorAutoSave(address, {
+    arv: arvNum || undefined,
+    repair_estimate: repairsNum || undefined,
+    assignment_fee: feeNum || undefined,
+    offer_price: mao > 0 ? mao : undefined,
+  });
 
   const insights = [];
   if (mao !== null) {
@@ -145,8 +153,14 @@ export default function MAOCalculator() {
 
       {/* RIGHT: Output Report */}
       <div className="space-y-3">
-        <div className="flex justify-end">
-          <Button variant="outline" size="sm" className="gap-2" onClick={handleDownload}>
+        <div className="flex items-center justify-between">
+          {matchedDeal && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <Save className="w-3 h-3" />
+              {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? `Saved to "${matchedDeal.property_address}"` : `Linked to "${matchedDeal.property_address}"`}
+            </p>
+          )}
+          <Button variant="outline" size="sm" className="gap-2 ml-auto" onClick={handleDownload}>
             <Download className="w-4 h-4" /> Download PDF
           </Button>
         </div>
