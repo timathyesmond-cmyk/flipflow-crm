@@ -17,21 +17,21 @@ export default function Calculator() {
         <p className="text-sm text-muted-foreground mt-1">Analyze your deals across different acquisition strategies</p>
       </div>
 
-      <Tabs defaultValue="agreement">
+      <Tabs defaultValue="mao">
         <TabsList className="grid grid-cols-2 sm:grid-cols-5 w-full h-auto gap-1 p-1">
-          <TabsTrigger value="agreement" className="text-xs sm:text-sm py-2">Purchase Agreement</TabsTrigger>
           <TabsTrigger value="mao" className="text-xs sm:text-sm py-2">MAO / Wholesale</TabsTrigger>
           <TabsTrigger value="sub2" className="text-xs sm:text-sm py-2">Subject-To</TabsTrigger>
           <TabsTrigger value="sf" className="text-xs sm:text-sm py-2">Seller Finance</TabsTrigger>
           <TabsTrigger value="hybrid" className="text-xs sm:text-sm py-2">Hybrid</TabsTrigger>
+          <TabsTrigger value="agreement" className="text-xs sm:text-sm py-2">Purchase Agreement</TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
-          <TabsContent value="agreement"><PurchaseAgreementGenerator /></TabsContent>
           <TabsContent value="mao"><MAOCalculator /></TabsContent>
           <TabsContent value="sub2"><Sub2Calculator /></TabsContent>
           <TabsContent value="sf"><SellerFinanceCalculator /></TabsContent>
           <TabsContent value="hybrid"><HybridCalculator /></TabsContent>
+          <TabsContent value="agreement"><PurchaseAgreementGenerator /></TabsContent>
         </div>
       </Tabs>
     </div>
