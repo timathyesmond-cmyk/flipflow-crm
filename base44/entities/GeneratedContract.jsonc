@@ -1,0 +1,35 @@
+{
+  "name": "GeneratedContract",
+  "type": "object",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "The related deal ID"
+    },
+    "contract_type": {
+      "type": "string",
+      "enum": [
+        "purchase_agreement",
+        "assignment_contract",
+        "joint_venture"
+      ],
+      "description": "Type of contract generated"
+    },
+    "property_address": {
+      "type": "string",
+      "description": "Property address at time of generation"
+    },
+    "parties": {
+      "type": "string",
+      "description": "Summary of parties involved"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Any extra notes"
+    }
+  },
+  "required": [
+    "deal_id",
+    "contract_type"
+  ]
+}

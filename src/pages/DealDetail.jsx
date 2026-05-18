@@ -23,6 +23,7 @@ import DealTimeline from '@/components/deals/DealTimeline';
 import FollowUpEmailDialog from '@/components/deals/FollowUpEmailDialog';
 import TaskReminderCard from '@/components/deals/TaskReminderCard';
 import PropertyPhotos from '@/components/deals/PropertyPhotos';
+import DealContracts from '@/components/deals/DealContracts';
 
 const stageConfig = {
   lead: { label: 'Lead', color: 'bg-muted text-muted-foreground' },
@@ -296,6 +297,8 @@ export default function DealDetail() {
           </div>
 
           <PropertyPhotos deal={deal} onSave={(data) => updateMutation.mutate(data)} />
+
+          <DealContracts dealId={id} />
 
           {deal.notes && (
             <Card>

@@ -3,9 +3,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertTriangle, Download } from 'lucide-react';
+import { AlertTriangle, Download, Save, CheckCircle2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { base44 } from '@/api/base44Client';
+import { useCalculatorAutoSave } from '@/hooks/useCalculatorAutoSave';
 
 function Field({ label, value, onChange, placeholder, type = 'text', className = '' }) {
   return (
@@ -34,6 +36,21 @@ export default function JointVentureContractGenerator() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [additionalTerms, setAdditionalTerms] = useState('');
+
+  const { matchedDeal } = useCalculatorAutoSave(propertyAddress, {});
+  const [saved, setSaved] = useState(false);
+
+  const handleSaveToDeal = async () => {
+    if (!matchedDeal) return;
+    await base44.entities.GeneratedContract.create({
+      deal_id: matchedDeal.id,
+      contract_type: 'joint_venture',
+      property_address: [propertyAddress, city, state, zip].filter(Boolean).join(', '),
+      parties: [party1Name, party2Name].filter(Boolean).join(' / '),
+    });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
 
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -119,7 +136,13 @@ export default function JointVentureContractGenerator() {
 
       {/* RIGHT: Contract Preview */}
       <div className="space-y-3">
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {matchedDeal && (
+            <Button variant="outline" size="sm" className="gap-2" onClick={handleSaveToDeal} disabled={saved}>
+              {saved ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <Save className="w-4 h-4" />}
+              {saved ? 'Saved!' : `Save to Deal`}
+            </Button>
+          )}
           <Button variant="outline" size="sm" className="gap-2" onClick={handleDownload}>
             <Download className="w-4 h-4" /> Download PDF
           </Button>
