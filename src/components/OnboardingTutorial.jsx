@@ -82,11 +82,23 @@ const STEPS = [
     color: 'from-slate-500 to-zinc-600',
     badge: 'Tools',
     title: 'Deal Calculators',
-    description: 'Run the numbers before you make an offer. Multiple calculation strategies built right in.',
+    description: 'Run the numbers on any deal before you make an offer. Four specialized calculators cover every acquisition strategy.',
     features: [
-      'MAO Calculator: find your Maximum Allowable Offer instantly',
-      'Subject-To, Seller Finance, and Hybrid deal calculators',
-      'All inputs are editable — tweak numbers and see results live',
+      'MAO / Wholesale: find your Maximum Allowable Offer and assignment fee instantly',
+      'Subject-To & Seller Finance: model mortgage takeovers and carryback financing',
+      'Hybrid: combine Sub-2 + seller carryback into one deal structure',
+    ],
+  },
+  {
+    icon: FileDown,
+    color: 'from-indigo-500 to-violet-600',
+    badge: 'Contracts',
+    title: 'Contract Templates',
+    description: 'Generate ready-to-sign contracts right inside the app. Fill in the details and download a professional PDF in seconds.',
+    features: [
+      'Purchase Agreement: assignable contract with all key terms and signature lines',
+      'Assignment Contract: transfer your equitable interest to an end buyer with a built-in assignment fee',
+      'Both templates include a legal disclaimer — always review with your attorney',
     ],
   },
   {
@@ -103,7 +115,7 @@ const STEPS = [
   },
 ];
 
-const STORAGE_KEY = 'wholesale_crm_tutorial_v2_dismissed';
+const STORAGE_KEY = 'wholesale_crm_tutorial_v3_dismissed';
 
 export default function OnboardingTutorial() {
   const [visible, setVisible] = useState(false);
