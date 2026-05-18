@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 function calcMonthlyPayment(principal, annualRate, termMonths) {
   if (!principal || !termMonths) return 0;
@@ -68,6 +70,7 @@ function NumField({ label, value, onChange, suffix }) {
 }
 
 export default function HybridCalculator() {
+  const reportRef = useRef(null);
   const [address, setAddress] = useState('');
   // Seller offer inputs
   const [purchasePrice, setPurchasePrice] = useState('');
@@ -190,7 +193,26 @@ export default function HybridCalculator() {
       </div>
 
       {/* RIGHT: Output Report */}
-      <div className="bg-[#f5f0e8] rounded-2xl p-6 space-y-4 font-mono">
+      <div className="space-y-3">
+        <div className="flex justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={async () => {
+              if (!reportRef.current) return;
+              const canvas = await html2canvas(reportRef.current, { scale: 2, useCORS: true });
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width / 2, canvas.height / 2] });
+              pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+              const filename = address ? `hybrid-${address.toLowerCase().replace(/\s+/g, '-')}.pdf` : 'hybrid-calculator.pdf';
+              pdf.save(filename);
+            }}
+          >
+            <Download className="w-4 h-4" /> Download PDF
+          </Button>
+        </div>
+      <div ref={reportRef} className="bg-[#f5f0e8] rounded-2xl p-6 space-y-4 font-mono">
         {/* Header */}
         <div className="text-center mb-4">
           <h2 className="text-4xl font-black tracking-tight text-foreground">HYBRID</h2>
@@ -254,6 +276,7 @@ export default function HybridCalculator() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
