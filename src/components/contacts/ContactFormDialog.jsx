@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const defaultContact = { name: '', type: 'buyer', phone: '', email: '', company: '', notes: '' };
+const defaultContact = { name: '', type: 'cash_buyer', phone: '', email: '', company: '', notes: '' };
 
 export default function ContactFormDialog({ open, onOpenChange, onSave, contact, isLoading }) {
   const [form, setForm] = useState(contact || defaultContact);
@@ -38,10 +38,12 @@ export default function ContactFormDialog({ open, onOpenChange, onSave, contact,
             <Select value={form.type} onValueChange={v => set('type', v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="buyer">Buyer</SelectItem>
-                <SelectItem value="seller">Seller</SelectItem>
+                <SelectItem value="cash_buyer">Cash Buyer</SelectItem>
+                <SelectItem value="wholesaler">Wholesaler</SelectItem>
                 <SelectItem value="agent">Agent</SelectItem>
                 <SelectItem value="contractor">Contractor</SelectItem>
+                <SelectItem value="title_company">Title Company</SelectItem>
+                <SelectItem value="seller">Seller</SelectItem>
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>

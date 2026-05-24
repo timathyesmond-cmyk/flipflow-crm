@@ -22,12 +22,30 @@ const CONTACT_FIELDS = [
 ];
 const CONTACT_SAMPLE = { name: 'John Smith', type: 'buyer', phone: '555-1234', email: 'john@example.com', company: 'ABC LLC', notes: '' };
 
+const TABS = [
+  { id: 'all', label: 'All' },
+  { id: 'cash_buyer', label: 'Cash Buyers' },
+  { id: 'wholesaler', label: 'Wholesalers' },
+  { id: 'agent', label: 'Agents' },
+  { id: 'contractor', label: 'Contractors' },
+  { id: 'title_company', label: 'Title Companies' },
+  { id: 'seller', label: 'Sellers' },
+  { id: 'other', label: 'Other' },
+];
+
 const typeColors = {
-  buyer: 'bg-blue-100 text-blue-700',
+  cash_buyer: 'bg-blue-100 text-blue-700',
+  wholesaler: 'bg-violet-100 text-violet-700',
   seller: 'bg-amber-100 text-amber-700',
   agent: 'bg-purple-100 text-purple-700',
   contractor: 'bg-emerald-100 text-emerald-700',
+  title_company: 'bg-cyan-100 text-cyan-700',
   other: 'bg-muted text-muted-foreground',
+};
+
+const typeLabels = {
+  cash_buyer: 'Cash Buyer', wholesaler: 'Wholesaler', seller: 'Seller',
+  agent: 'Agent', contractor: 'Contractor', title_company: 'Title Co.', other: 'Other',
 };
 
 export default function Contacts() {
@@ -112,59 +130,35 @@ export default function Contacts() {
         </div>
       </div>
 
+      {/* Type Tabs */}
+      <div className="flex gap-1 overflow-x-auto pb-1 border-b">
+        {TABS.map(tab => {
+          const count = tab.id === 'all' ? contacts.length : contacts.filter(c => c.type === tab.id).length;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setTypeFilter(tab.id)}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-t-lg whitespace-nowrap transition-colors border-b-2 -mb-px',
+                typeFilter === tab.id
+                  ? 'border-primary text-primary bg-primary/5'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {tab.label}
+              <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', typeFilter === tab.id ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground')}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[180px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Search contacts..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="All Types" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="buyer">Buyers</SelectItem>
-            <SelectItem value="seller">Sellers</SelectItem>
-            <SelectItem value="agent">Agents</SelectItem>
-            <SelectItem value="contractor">Contractors</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={propTypeFilter} onValueChange={setPropTypeFilter}>
-          <SelectTrigger className="w-44">
-            <SelectValue placeholder="Property Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Property Types</SelectItem>
-            <SelectItem value="single_family">Single Family</SelectItem>
-            <SelectItem value="multi_family">Multi Family</SelectItem>
-            <SelectItem value="townhouse">Townhouse</SelectItem>
-            <SelectItem value="condo">Condo</SelectItem>
-            <SelectItem value="land">Land</SelectItem>
-            <SelectItem value="commercial">Commercial</SelectItem>
-          </SelectContent>
-        </Select>
-        <div className="relative min-w-[160px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Filter by location..." value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="pl-9" />
-        </div>
         <div className="flex items-center gap-1 border rounded-lg overflow-hidden">
           {['all', 'active', 'inactive'].map(opt => (
-            <button
-              key={opt}
-              onClick={() => setBuyerStatusFilter(opt)}
-              className={cn(
-                'px-3 py-1.5 text-xs font-medium capitalize transition-colors',
-                buyerStatusFilter === opt ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:text-foreground'
-              )}
-            >
-              {opt === 'all' ? 'All Buyers' : opt === 'active' ? '🟢 Active' : '⚫ Inactive'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map(contact => (
           <div key={contact.id} className="bg-card rounded-xl border border-border/60 p-4 hover:shadow-md transition-all duration-200 group">
             <div className="flex items-start justify-between mb-3">
@@ -176,9 +170,9 @@ export default function Contacts() {
                   <p className="text-sm font-semibold">{contact.name}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <Badge variant="secondary" className={cn("text-[10px]", typeColors[contact.type])}>
-                      {contact.type}
+                      {typeLabels[contact.type] || contact.type}
                     </Badge>
-                    {contact.type === 'buyer' && (
+                    {contact.type === 'cash_buyer' && (
                       <span className={cn("text-[10px] px-1.5 py-0.5 rounded-full font-medium", contact.is_active === false ? 'bg-muted text-muted-foreground' : 'bg-emerald-100 text-emerald-700')}>
                         {contact.is_active === false ? 'Inactive' : 'Active'}
                       </span>
@@ -187,7 +181,7 @@ export default function Contacts() {
                 </div>
               </div>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                {contact.type === 'buyer' && (
+                {contact.type === 'cash_buyer' && (
                   <button
                     onClick={() => updateMutation.mutate({ id: contact.id, data: { is_active: contact.is_active === false ? true : false } })}
                     className="p-1.5 rounded-md hover:bg-muted"
@@ -199,7 +193,7 @@ export default function Contacts() {
                     }
                   </button>
                 )}
-                {contact.type === 'buyer' && (
+                {contact.type === 'cash_buyer' && (
                   <button onClick={() => setBuyerProfile(contact)} className="p-1.5 rounded-md hover:bg-muted" title="Buyer Profile">
                     <UserCheck className="w-3 h-3 text-blue-500" />
                   </button>
@@ -260,7 +254,7 @@ export default function Contacts() {
                 </div>
               )}
             </div>
-            {contact.type === 'buyer' && (contact.buyer_property_types?.length > 0 || contact.buyer_locations?.length > 0) && (
+            {contact.type === 'cash_buyer' && (contact.buyer_property_types?.length > 0 || contact.buyer_locations?.length > 0) && (
               <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
                 {contact.buyer_property_types?.length > 0 && (
                   <div className="flex flex-wrap gap-1">

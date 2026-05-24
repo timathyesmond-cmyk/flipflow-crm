@@ -8,13 +8,15 @@
     "type": {
       "type": "string",
       "enum": [
-        "seller",
-        "buyer",
+        "cash_buyer",
+        "wholesaler",
         "agent",
         "contractor",
+        "title_company",
+        "seller",
         "other"
       ],
-      "default": "buyer"
+      "default": "cash_buyer"
     },
     "phone": {
       "type": "string"
@@ -31,14 +33,14 @@
     "is_active": {
       "type": "boolean",
       "default": true,
-      "description": "Whether this buyer is actively looking"
+      "description": "Whether this contact is actively looking/working"
     },
     "buyer_property_types": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Preferred property types for buyer"
+      "description": "Preferred property types"
     },
     "buyer_locations": {
       "type": "array",
@@ -48,27 +50,22 @@
       "description": "Preferred cities/states/zip codes"
     },
     "buyer_min_beds": {
-      "type": "number",
-      "description": "Minimum bedrooms"
+      "type": "number"
     },
     "buyer_max_price": {
-      "type": "number",
-      "description": "Maximum purchase price"
+      "type": "number"
     },
     "buyer_min_arv": {
-      "type": "number",
-      "description": "Minimum ARV they target"
+      "type": "number"
     },
     "buyer_deal_types": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "Preferred deal types (assignment, double_close, novation)"
+      }
     },
     "buyer_notes": {
-      "type": "string",
-      "description": "Additional buyer preferences"
+      "type": "string"
     }
   },
   "required": [
