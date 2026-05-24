@@ -1,0 +1,46 @@
+{
+  "name": "UserSubscription",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the subscribed user (from auth session)"
+    },
+    "checkout_id": {
+      "type": "string",
+      "description": "Wix checkout session ID for correlating webhook"
+    },
+    "subscription_id": {
+      "type": "string",
+      "description": "Wix subscription ID (set when order_approved webhook fires)"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "wholesale",
+        "pro"
+      ],
+      "description": "Subscription tier"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "canceled",
+        "expired"
+      ],
+      "description": "Subscription status"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Monthly price paid"
+    }
+  },
+  "required": [
+    "user_email",
+    "tier",
+    "status"
+  ]
+}

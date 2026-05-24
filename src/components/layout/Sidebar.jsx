@@ -18,7 +18,10 @@ const navItems = [
 
 const ADMIN_EMAIL = 'timathyesmond@gmail.com';
 
-export default function Sidebar({ isOpen, setIsOpen }) {
+const TIER_LABELS = { basic: 'Basic', wholesale: 'Wholesale', pro: 'Pro', trial: 'Trial' };
+const TIER_COLORS = { basic: 'text-blue-400', wholesale: 'text-amber-400', pro: 'text-purple-400', trial: 'text-emerald-400' };
+
+export default function Sidebar({ isOpen, setIsOpen, effectiveTier }) {
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -113,7 +116,15 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         )}
 
         {/* Footer */}
-        <div className="p-3 border-t border-sidebar-border">
+        <div className="p-3 border-t border-sidebar-border space-y-1">
+          {effectiveTier && (
+            <div className="px-3 py-1.5 flex items-center justify-between">
+              <span className="text-xs text-sidebar-foreground/40">Plan</span>
+              <span className={`text-xs font-semibold ${TIER_COLORS[effectiveTier] || 'text-sidebar-foreground/60'}`}>
+                {TIER_LABELS[effectiveTier] || effectiveTier}
+              </span>
+            </div>
+          )}
           <button
             onClick={() => base44.auth.logout()}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/50 hover:text-white hover:bg-sidebar-accent/50 transition-colors w-full"
