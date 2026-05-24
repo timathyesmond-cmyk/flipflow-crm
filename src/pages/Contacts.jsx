@@ -5,7 +5,6 @@ import { Plus, Search, Phone, Mail, Building2, Loader2, Trash2, Pencil, User, Up
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
@@ -14,7 +13,6 @@ import { cn } from '@/lib/utils';
 import ContactFormDialog from '@/components/contacts/ContactFormDialog';
 import BuyerProfileDialog from '@/components/contacts/BuyerProfileDialog';
 import ImportDialog from '@/components/ImportDialog';
-
 
 const CONTACT_FIELDS = [
   { key: 'name', required: true }, { key: 'type' }, { key: 'phone' },
@@ -55,9 +53,7 @@ export default function Contacts() {
   const [buyerProfile, setBuyerProfile] = useState(null);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [propTypeFilter, setPropTypeFilter] = useState('all');
-  const [locationFilter, setLocationFilter] = useState('');
-  const [buyerStatusFilter, setBuyerStatusFilter] = useState('all'); // 'all' | 'active' | 'inactive'
+  const [buyerStatusFilter, setBuyerStatusFilter] = useState('all');
   const queryClient = useQueryClient();
 
   const { data: contacts = [], isLoading } = useQuery({
@@ -98,11 +94,9 @@ export default function Contacts() {
     const matchSearch = !search || c.name?.toLowerCase().includes(search.toLowerCase()) ||
       c.email?.toLowerCase().includes(search.toLowerCase()) || c.company?.toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === 'all' || c.type === typeFilter;
-    const matchPropType = propTypeFilter === 'all' || c.buyer_property_types?.includes(propTypeFilter);
-    const matchLocation = !locationFilter || c.buyer_locations?.some(loc => loc.toLowerCase().includes(locationFilter.toLowerCase()));
-    const matchBuyerStatus = buyerStatusFilter === 'all' || c.type !== 'buyer' ||
+    const matchBuyerStatus = buyerStatusFilter === 'all' || c.type !== 'cash_buyer' ||
       (buyerStatusFilter === 'active' ? c.is_active !== false : c.is_active === false);
-    return matchSearch && matchType && matchPropType && matchLocation && matchBuyerStatus;
+    return matchSearch && matchType && matchBuyerStatus;
   });
 
   if (isLoading) {
@@ -157,8 +151,25 @@ export default function Contacts() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Search contacts..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <div className="flex items-center gap-1 border rounded-lg overflow-hidden">
-          {['all', 'active', 'inactive'].map(opt => (
+        {typeFilter === 'cash_buyer' && (
+          <div className="flex items-center gap-1 border rounded-lg overflow-hidden">
+            {['all', 'active', 'inactive'].map(opt => (
+              <button
+                key={opt}
+                onClick={() => setBuyerStatusFilter(opt)}
+                className={cn(
+                  'px-3 py-1.5 text-xs font-medium capitalize transition-colors',
+                  buyerStatusFilter === opt ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {opt === 'all' ? 'All Buyers' : opt === 'active' ? '🟢 Active' : '⚫ Inactive'}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map(contact => (
           <div key={contact.id} className="bg-card rounded-xl border border-border/60 p-4 hover:shadow-md transition-all duration-200 group">
             <div className="flex items-start justify-between mb-3">
