@@ -5,7 +5,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Ban, CheckCircle, Crown, MapPin, Phone, Mail, Gift, X, ExternalLink, ChevronDown, ChevronUp, Building2, DollarSign, Calendar, FileText, User } from 'lucide-react';
+import { Loader2, Ban, CheckCircle, Crown, MapPin, Phone, Mail, Gift, X, ExternalLink, ChevronDown, ChevronUp, Building2, DollarSign, Calendar, FileText, User, Zap, Star, Send, Shield } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -197,16 +199,62 @@ function ContactRow({ contact }) {
   );
 }
 
+const TIER_LABELS = { basic: 'Basic ($14.99)', wholesale: 'Wholesale ($24.99)', pro: 'Pro ($49.99)' };
+const TIER_ICONS = { basic: Zap, wholesale: Star, pro: Crown };
+
 export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdated }) {
   const queryClient = useQueryClient();
   const [banReason, setBanReason] = useState('');
   const [giftNote, setGiftNote] = useState('');
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
 
   const { data: deals = [], isLoading: dealsLoading } = useQuery({
     queryKey: ['admin-user-deals', user?.email],
     queryFn: () => base44.entities.Deal.filter({ created_by: user.email }),
     enabled: open && !!user,
   });
+
+  const { data: subscriptions = [] } = useQuery({
+    queryKey: ['admin-user-subscription', user?.email],
+    queryFn: () => base44.entities.UserSubscription.filter({ user_email: user.email }),
+    enabled: open && !!user,
+  });
+  const userSub = subscriptions[0] || null;
+
+  const tierMutation = useMutation({
+    mutationFn: async (tier) => {
+      if (userSub) {
+        if (tier === 'none') {
+          return base44.entities.UserSubscription.update(userSub.id, { status: 'canceled' });
+        }
+        return base44.entities.UserSubscription.update(userSub.id, { tier, status: 'active' });
+      } else if (tier !== 'none') {
+        return base44.entities.UserSubscription.create({ user_email: user.email, tier, status: 'active', amount: tier === 'basic' ? 14.99 : tier === 'wholesale' ? 24.99 : 49.99 });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-user-subscription', user.email] });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success('Subscription access updated');
+      onUserUpdated?.();
+    },
+  });
+
+  const sendEmail = async () => {
+    if (!emailSubject.trim() || !emailBody.trim()) return;
+    setEmailSending(true);
+    try {
+      await base44.integrations.Core.SendEmail({ to: user.email, subject: emailSubject, body: emailBody });
+      toast.success('Email sent successfully');
+      setEmailSubject('');
+      setEmailBody('');
+    } catch (e) {
+      toast.error('Failed to send email');
+    }
+    setEmailSending(false);
+  };
 
   const { data: contacts = [], isLoading: contactsLoading } = useQuery({
     queryKey: ['admin-user-contacts', user?.email],
@@ -278,6 +326,14 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
           </SheetTitle>
         </SheetHeader>
 
+        {/* Subscription tier badge */}
+        {userSub && userSub.status === 'active' && (
+          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200">
+            {(() => { const Icon = TIER_ICONS[userSub.tier] || Zap; return <Icon className="w-4 h-4 text-amber-600" />; })()}
+            <span className="text-xs font-semibold text-amber-700">{TIER_LABELS[userSub.tier] || userSub.tier} — Active</span>
+          </div>
+        )}
+
         {/* Status badges */}
         <div className="flex flex-wrap gap-2 mb-5">
           <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
@@ -338,6 +394,64 @@ export default function UserDetailDrawer({ user, open, onOpenChange, onUserUpdat
               {totalProfit > 0 ? `$${(totalProfit / 1000).toFixed(0)}k` : '$0'}
             </p>
             <p className="text-xs text-muted-foreground">Closed Fees</p>
+          </div>
+        </div>
+
+        {/* Change Access Tier */}
+        {user.email !== ADMIN_EMAIL && (
+          <div className="mb-5">
+            <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-muted-foreground" /> Subscription Access
+            </h3>
+            <div className="flex items-center gap-2">
+              <Select
+                defaultValue={userSub?.status === 'active' ? userSub.tier : 'none'}
+                key={`${userSub?.id}-${userSub?.tier}-${userSub?.status}`}
+                onValueChange={(val) => tierMutation.mutate(val)}
+                disabled={tierMutation.isPending}
+              >
+                <SelectTrigger className="w-48 h-8 text-xs">
+                  <SelectValue placeholder="Set tier..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Access</SelectItem>
+                  <SelectItem value="basic">Basic ($14.99/mo)</SelectItem>
+                  <SelectItem value="wholesale">Wholesale ($24.99/mo)</SelectItem>
+                  <SelectItem value="pro">Pro ($49.99/mo)</SelectItem>
+                </SelectContent>
+              </Select>
+              {tierMutation.isPending && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
+            </div>
+          </div>
+        )}
+
+        {/* Send Email */}
+        <div className="mb-5">
+          <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+            <Mail className="w-4 h-4 text-muted-foreground" /> Email User
+          </h3>
+          <div className="space-y-2">
+            <Input
+              placeholder="Subject"
+              value={emailSubject}
+              onChange={e => setEmailSubject(e.target.value)}
+              className="h-8 text-xs"
+            />
+            <Textarea
+              placeholder="Write your message..."
+              value={emailBody}
+              onChange={e => setEmailBody(e.target.value)}
+              rows={3}
+            />
+            <Button
+              size="sm"
+              className="gap-1.5 h-8"
+              onClick={sendEmail}
+              disabled={emailSending || !emailSubject.trim() || !emailBody.trim()}
+            >
+              {emailSending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+              Send Email
+            </Button>
           </div>
         </div>
 
