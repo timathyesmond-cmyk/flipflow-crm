@@ -15,6 +15,7 @@ import Calculator from './pages/Calculator';
 import Settings from './pages/Settings';
 import Suggestions from './pages/Suggestions';
 import Admin from './pages/Admin';
+import LandingPage from './pages/Landing';
 import Pricing from './pages/Pricing';
 import ThankYou from './pages/ThankYou';
 
@@ -40,10 +41,14 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Redirect to login if auth check is done and user is not authenticated
+  // Unauthenticated: show public landing page at "/", redirect to login for all other paths
   if (authChecked && !isAuthenticated) {
-    navigateToLogin();
-    return null;
+    return (
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
+    );
   }
 
   // Render the main app
