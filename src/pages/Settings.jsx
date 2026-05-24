@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProfileSection from '@/components/settings/ProfileSection';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -9,8 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, Mail, Settings as SettingsIcon, X, Save } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Plus, Pencil, Trash2, Mail, Settings as SettingsIcon, X, Save, CreditCard, Zap, Star, Crown, CheckCircle, Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const STAGE_LABELS = {
   any: 'Any Stage', lead: 'Lead', contacted: 'Contacted',
@@ -27,10 +29,27 @@ const EMPTY = { name: '', deal_stage: 'any', audience: 'seller', subject: '', bo
 
 const PLACEHOLDER_HINT = '{{name}}, {{address}}, {{offer_price}}, {{closing_date}}';
 
+const PLAN_TIERS = [
+  { id: 'basic', label: 'Basic', price: '$14.99/mo', icon: Zap, color: 'text-blue-500', features: ['Up to 50 deals', 'Basic calculator', 'Email templates'] },
+  { id: 'wholesale', label: 'Wholesale', price: '$24.99/mo', icon: Star, color: 'text-amber-500', features: ['Unlimited deals', 'Advanced calculator', 'Buyer matching', 'SMS templates'] },
+  { id: 'pro', label: 'Pro', price: '$49.99/mo', icon: Crown, color: 'text-purple-500', features: ['Everything in Wholesale', 'Contracts generator', 'Subject-To & Seller Finance', 'Priority support'] },
+];
+
 export default function Settings() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [editing, setEditing] = useState(null); // null | 'new' | template object
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+
+  const { data: subscriptions = [] } = useQuery({
+    queryKey: ['my-subscription', user?.email],
+    queryFn: () => base44.entities.UserSubscription.filter({ user_email: user.email }),
+    enabled: !!user,
+  });
+  const activeSub = subscriptions.find(s => s.status === 'active') || null;
 
   const { data: templates = [], isLoading } = useQuery({
     queryKey: ['email_templates'],
@@ -75,12 +94,89 @@ export default function Settings() {
         <SettingsIcon className="w-6 h-6" />
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground">Manage your profile and email templates</p>
+          <p className="text-sm text-muted-foreground">Manage your profile, plan, and email templates</p>
         </div>
       </div>
 
-      <ProfileSection />
+      <Tabs defaultValue="profile">
+        <TabsList className="mb-4">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="plan">Plan</TabsTrigger>
+          <TabsTrigger value="templates">Email Templates</TabsTrigger>
+        </TabsList>
 
+        <TabsContent value="profile">
+          <ProfileSection />
+        </TabsContent>
+
+        <TabsContent value="plan">
+          <div className="space-y-4">
+            {/* Current plan */}
+            {activeSub ? (
+              <Card className="border-2 border-primary/20 bg-primary/5">
+                <CardContent className="py-4 px-5 flex items-center gap-4">
+                  {(() => { const tier = PLAN_TIERS.find(t => t.id === activeSub.tier); if (!tier) return null; const Icon = tier.icon; return <Icon className={`w-8 h-8 ${tier.color}`} />; })()}
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm">Current Plan: <span className="capitalize">{activeSub.tier}</span></p>
+                    <p className="text-xs text-muted-foreground">{PLAN_TIERS.find(t => t.id === activeSub.tier)?.price}</p>
+                  </div>
+                  <Badge className="bg-emerald-100 text-emerald-700 border-0"><CheckCircle className="w-3 h-3 mr-1" />Active</Badge>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-dashed">
+                <CardContent className="py-5 px-5">
+                  <p className="text-sm text-muted-foreground">You don't have an active subscription.</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Plan options */}
+            <div className="grid sm:grid-cols-3 gap-4">
+              {PLAN_TIERS.map(tier => {
+                const Icon = tier.icon;
+                const isCurrent = activeSub?.tier === tier.id;
+                return (
+                  <Card key={tier.id} className={`relative transition-all ${isCurrent ? 'border-2 border-primary ring-1 ring-primary/20' : 'hover:shadow-md'}`}>
+                    <CardContent className="pt-5 pb-4 px-4 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Icon className={`w-5 h-5 ${tier.color}`} />
+                        <span className="font-semibold text-sm">{tier.label}</span>
+                        {isCurrent && <Badge className="text-[10px] ml-auto bg-primary text-primary-foreground">Current</Badge>}
+                      </div>
+                      <p className="text-lg font-bold">{tier.price}</p>
+                      <ul className="space-y-1">
+                        {tier.features.map(f => (
+                          <li key={f} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                            <CheckCircle className="w-3 h-3 text-emerald-500 mt-0.5 flex-shrink-0" />{f}
+                          </li>
+                        ))}
+                      </ul>
+                      <Button
+                        size="sm"
+                        variant={isCurrent ? 'outline' : 'default'}
+                        className="w-full gap-1.5"
+                        disabled={isCurrent}
+                        onClick={() => navigate('/pricing')}
+                      >
+                        {isCurrent ? 'Current Plan' : 'Switch to ' + tier.label}
+                        {!isCurrent && <ExternalLink className="w-3 h-3" />}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {activeSub && (
+              <p className="text-xs text-muted-foreground text-center">
+                To cancel or manage billing, go to <button className="underline hover:text-foreground" onClick={() => navigate('/pricing')}>Pricing page</button>.
+              </p>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="templates">
       {/* Email Templates Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -196,6 +292,8 @@ export default function Settings() {
           </div>
         )}
       </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
