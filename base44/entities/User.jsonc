@@ -10,29 +10,29 @@
       ],
       "default": "user"
     },
-    "is_banned": {
-      "type": "boolean",
-      "default": false,
-      "description": "Whether this user is banned from the platform"
-    },
-    "ban_reason": {
-      "type": "string",
-      "description": "Reason for the ban"
-    },
     "gifted_membership": {
       "type": "boolean",
       "default": false,
-      "description": "Whether this user has been gifted a free membership by the admin"
+      "description": "If true, user has a permanently free membership \u2014 bypasses trial expiry and payment prompts"
     },
     "gifted_membership_note": {
       "type": "string",
-      "description": "Optional note about why membership was gifted"
+      "description": "Admin note explaining why membership was gifted"
     },
     "gifted_membership_date": {
       "type": "string",
-      "format": "date",
-      "description": "Date membership was gifted"
+      "description": "Date the membership was gifted"
+    },
+    "trial_start_date": {
+      "type": "string",
+      "description": "ISO timestamp of when the 7-day trial started"
+    },
+    "is_banned": {
+      "type": "boolean",
+      "default": false
+    },
+    "ban_reason": {
+      "type": "string"
     }
-  },
-  "required": []
+  }
 }
