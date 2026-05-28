@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ThemeToggle from '@/components/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings, Lightbulb, Shield, Building2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -118,6 +119,7 @@ export default function Sidebar({ isOpen, setIsOpen, effectiveTier }) {
 
         {/* Footer */}
         <div className="p-3 border-t border-sidebar-border space-y-1">
+          <ThemeToggle />
           {effectiveTier && (
             <div className="px-3 py-1.5 flex items-center justify-between">
               <span className="text-xs text-sidebar-foreground/40">Plan</span>
