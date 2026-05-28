@@ -51,6 +51,13 @@ export default function Portfolio() {
     base44.auth.me().then(setCurrentUser).catch(() => {});
   }, []);
 
+  const [rentalOpen, setRentalOpen] = useState(false);
+  const [editRental, setEditRental] = useState(null);
+  const [tenantOpen, setTenantOpen] = useState(false);
+  const [editTenant, setEditTenant] = useState(null);
+  const [flipOpen, setFlipOpen] = useState(false);
+  const [editFlip, setEditFlip] = useState(null);
+
   const { data: rentals = [] } = useQuery({
     queryKey: ['rental-properties'],
     queryFn: () => base44.entities.RentalProperty.list(),
