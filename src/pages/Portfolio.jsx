@@ -9,9 +9,11 @@ import UpgradeGate from '@/components/UpgradeGate';
 import RentalDialog from '@/components/portfolio/RentalDialog';
 import TenantDialog from '@/components/portfolio/TenantDialog';
 import FixFlipDialog from '@/components/portfolio/FixFlipDialog';
+import PortfolioAnalytics from '@/components/portfolio/PortfolioAnalytics';
+import PortfolioResources from '@/components/portfolio/PortfolioResources';
 import {
   Home, Users, Wrench, Plus, Edit, Trash2, Phone, Mail,
-  DollarSign, Calendar, TrendingUp, Building2
+  DollarSign, Calendar, TrendingUp, Building2, BarChart2, BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -160,6 +162,12 @@ export default function Portfolio() {
           </TabsTrigger>
           <TabsTrigger value="flips" className="flex items-center gap-1.5">
             <Wrench className="w-3.5 h-3.5" /> Fix-and-Flip ({flips.length})
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-1.5">
+            <BarChart2 className="w-3.5 h-3.5" /> Analytics
+          </TabsTrigger>
+          <TabsTrigger value="resources" className="flex items-center gap-1.5">
+            <BookOpen className="w-3.5 h-3.5" /> Resources
           </TabsTrigger>
         </TabsList>
 
@@ -377,6 +385,16 @@ export default function Portfolio() {
               })}
             </div>
           )}
+        </TabsContent>
+
+        {/* ── ANALYTICS ── */}
+        <TabsContent value="analytics" className="mt-4">
+          <PortfolioAnalytics rentals={rentals} tenants={tenants} flips={flips} />
+        </TabsContent>
+
+        {/* ── RESOURCES ── */}
+        <TabsContent value="resources" className="mt-4">
+          <PortfolioResources />
         </TabsContent>
       </Tabs>
 
