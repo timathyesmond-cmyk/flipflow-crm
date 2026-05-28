@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useOutletContext } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,7 @@ import {
   DollarSign, Calendar, TrendingUp, Building2, BarChart2, BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useSubscription } from '@/hooks/useSubscription';
+
 import { toast } from 'sonner';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -45,13 +46,9 @@ function fmtDate(d) { return d ? new Date(d).toLocaleDateString() : '—'; }
 
 export default function Portfolio() {
   const qc = useQueryClient();
-  const [currentUser, setCurrentUser] = useState(null);
-  const { tier } = useSubscription(currentUser);
-  const isPro = tier === 'pro';
-
-  useEffect(() => {
-    base44.auth.me().then(setCurrentUser).catch(() => {});
-  }, []);
+  const { effectiveTier } = useOutletContext() || {};
+  const TIER_RANK = { basic: 1, wholesale: 2, pro: 3, trial: 3 };
+  const isPro = (TIER_RANK[effectiveTier] || 0) >= TIER_RANK['pro'];
 
   const [rentalOpen, setRentalOpen] = useState(false);
   const [editRental, setEditRental] = useState(null);
