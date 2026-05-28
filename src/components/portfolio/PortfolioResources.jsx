@@ -322,9 +322,10 @@ export default function PortfolioResources() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Pro-exclusive templates for landlords and fix-and-flip investors. Click any template to view, copy, or download.
-      </p>
+      <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+        <span className="text-base leading-none mt-0.5">⚠️</span>
+        <p><strong>Disclaimer:</strong> These templates are for informational purposes only and do not constitute legal advice. They are not a substitute for professional legal counsel. Please consult a licensed attorney before using any of these documents.</p>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {TEMPLATES.map(t => (
