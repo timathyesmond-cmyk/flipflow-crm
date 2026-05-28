@@ -1,0 +1,63 @@
+{
+  "name": "RentalProperty",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "vacant",
+        "occupied",
+        "maintenance"
+      ],
+      "default": "vacant"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "single_family",
+        "multi_family",
+        "condo",
+        "townhouse",
+        "commercial"
+      ],
+      "default": "single_family"
+    },
+    "bedrooms": {
+      "type": "number"
+    },
+    "bathrooms": {
+      "type": "number"
+    },
+    "sqft": {
+      "type": "number"
+    },
+    "monthly_rent": {
+      "type": "number"
+    },
+    "purchase_price": {
+      "type": "number"
+    },
+    "current_value": {
+      "type": "number"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "address",
+    "status"
+  ]
+}

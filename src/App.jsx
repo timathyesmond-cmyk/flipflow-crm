@@ -16,6 +16,7 @@ import Settings from './pages/Settings';
 import Suggestions from './pages/Suggestions';
 import Admin from './pages/Admin';
 import LandingPage from './pages/Landing';
+import Portfolio from './pages/Portfolio';
 import Pricing from './pages/Pricing';
 import ThankYou from './pages/ThankYou';
 
@@ -62,6 +63,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/pricing" element={<Pricing />} />
       </Route>
       <Route path="/thank-you" element={<ThankYou />} />

@@ -1,0 +1,61 @@
+{
+  "name": "FixAndFlip",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "in_progress",
+        "listed",
+        "sold"
+      ],
+      "default": "planning"
+    },
+    "purchase_price": {
+      "type": "number"
+    },
+    "rehab_budget": {
+      "type": "number"
+    },
+    "rehab_spent": {
+      "type": "number"
+    },
+    "arv": {
+      "type": "number"
+    },
+    "purchase_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "target_sale_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "actual_sale_price": {
+      "type": "number"
+    },
+    "contractor_name": {
+      "type": "string"
+    },
+    "contractor_phone": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "address",
+    "status"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "name": "Tenant",
+  "type": "object",
+  "properties": {
+    "rental_property_id": {
+      "type": "string",
+      "description": "ID of the linked RentalProperty"
+    },
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "lease_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "lease_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "monthly_rent": {
+      "type": "number"
+    },
+    "security_deposit": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "late",
+        "past"
+      ],
+      "default": "active"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "rental_property_id",
+    "name",
+    "status"
+  ]
+}
