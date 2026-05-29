@@ -32,11 +32,11 @@ function fmtPct(val) {
 function Row({ label, value, highlight }) {
   return (
     <div className={`flex items-baseline gap-2 py-1.5 ${highlight ? 'font-semibold' : ''}`}>
-      <span className={`text-xs uppercase tracking-wider ${highlight ? 'text-foreground' : 'text-muted-foreground'} whitespace-nowrap flex-shrink-0`} style={{ fontFamily: 'monospace' }}>
+      <span className="text-xs uppercase tracking-wider text-gray-500 whitespace-nowrap flex-shrink-0" style={{ fontFamily: 'monospace' }}>
         {label}
       </span>
-      <span className="flex-1 border-b border-dotted border-border/60 mb-0.5 min-w-4" />
-      <span className={`text-sm font-mono font-medium flex-shrink-0 ${highlight ? 'text-foreground' : 'text-foreground/80'}`}>
+      <span className="flex-1 border-b border-dotted border-gray-400/40 mb-0.5 min-w-4" />
+      <span className={`text-sm font-mono font-medium flex-shrink-0 ${highlight ? 'text-gray-900' : 'text-gray-700'}`}>
         {value}
       </span>
     </div>
@@ -45,7 +45,7 @@ function Row({ label, value, highlight }) {
 
 function SectionTitle({ children }) {
   return (
-    <h3 className="text-base font-bold uppercase tracking-wide border-b-2 border-foreground pb-1 mb-3 mt-2">
+    <h3 className="text-base font-bold uppercase tracking-wide border-b-2 border-gray-800 pb-1 mb-3 mt-2 text-gray-900">
       {children}
     </h3>
   );
@@ -168,7 +168,7 @@ export default function HybridCalculator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-100 pb-1">Sub-2 Mortgage</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-200 pb-1">Sub-2 Mortgage</p>
           <div className="grid grid-cols-2 gap-3">
             <NumField label="Purchase Price" value={purchasePrice} onChange={setPurchasePrice} />
             <NumField label="Earnest Money" value={earnestMoney} onChange={setEarnestMoney} />
@@ -180,7 +180,7 @@ export default function HybridCalculator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-100 pb-1">Carryback (Seller Finance)</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-200 pb-1">Carryback (Seller Finance)</p>
           <div className="grid grid-cols-2 gap-3">
             <NumField label="Carryback Loan" value={carrybackLoan} onChange={setCarrybackLoan} />
             <NumField label="Interest Rate" value={carrybackRate} onChange={setCarrybackRate} suffix="%" />
@@ -190,7 +190,7 @@ export default function HybridCalculator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-100 pb-1">Buyer Costs & Rental</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-200 pb-1">Buyer Costs &amp; Rental</p>
           <div className="grid grid-cols-2 gap-3">
             <NumField label="Assignment Fee" value={assignmentFee} onChange={setAssignmentFee} />
             <NumField label="Closing Costs" value={closingCosts} onChange={setClosingCosts} />
@@ -230,8 +230,8 @@ export default function HybridCalculator() {
         <div ref={reportRef} className="bg-[#f5f0e8] rounded-2xl p-6 space-y-4 font-mono">
         {/* Header */}
         <div className="text-center mb-4">
-          <h2 className="text-4xl font-black tracking-tight text-foreground">HYBRID</h2>
-          {address && <p className="text-sm uppercase tracking-widest text-muted-foreground mt-1">{address.toUpperCase()}</p>}
+          <h2 className="text-4xl font-black tracking-tight text-gray-900">HYBRID</h2>
+          {address && <p className="text-sm uppercase tracking-widest text-gray-500 mt-1">{address.toUpperCase()}</p>}
         </div>
 
         {/* Your Offer to the Seller */}
@@ -285,7 +285,7 @@ export default function HybridCalculator() {
                       : <><AlertTriangle className="w-3.5 h-3.5" /> - {ins.title}</>
                     }
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5 ml-5">{ins.detail}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 ml-5">{ins.detail}</p>
                 </div>
               ))}
             </div>
