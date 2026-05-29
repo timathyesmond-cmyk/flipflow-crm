@@ -75,7 +75,7 @@ export default function PurchaseAgreementGenerator() {
       {/* LEFT: Inputs */}
       <div className="space-y-5">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-100 pb-1">Parties</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-200 pb-1">Parties</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Seller Full Name" value={sellerName} onChange={setSellerName} placeholder="John Smith" className="col-span-2" />
             <Field label="Buyer / Assignee Name" value={buyerName} onChange={setBuyerName} placeholder="Jane Doe and/or Assigns" className="col-span-2" />
@@ -83,7 +83,7 @@ export default function PurchaseAgreementGenerator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-100 pb-1">Property</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-200 pb-1">Property</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Street Address" value={propertyAddress} onChange={setPropertyAddress} placeholder="123 Main St" className="col-span-2" />
             <Field label="City" value={city} onChange={setCity} placeholder="Portland" />
@@ -93,7 +93,7 @@ export default function PurchaseAgreementGenerator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-100 pb-1">Terms</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-200 pb-1">Terms</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Purchase Price ($)" value={purchasePrice} onChange={setPurchasePrice} placeholder="150000" type="number" />
             <Field label="Earnest Money ($)" value={earnestMoney} onChange={setEarnestMoney} placeholder="1000" type="number" />
@@ -127,7 +127,7 @@ export default function PurchaseAgreementGenerator() {
           </Button>
         </div>
 
-        <div ref={reportRef} className="bg-white rounded-2xl border border-border p-6 text-sm space-y-4 font-serif leading-relaxed">
+        <div ref={reportRef} className="bg-white rounded-2xl border border-border p-6 text-sm space-y-4 font-serif leading-relaxed text-gray-900">
           {/* Disclaimer Banner */}
           <div className="bg-amber-50 border border-amber-300 rounded-lg px-4 py-3 flex gap-2 items-start">
             <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
@@ -166,7 +166,7 @@ export default function PurchaseAgreementGenerator() {
 
           {/* Purchase Price */}
           <div>
-            <p className="font-bold font-sans text-xs uppercase tracking-wide border-b pb-1 mb-2">2. Purchase Price & Earnest Money</p>
+            <p className="font-bold font-sans text-xs uppercase tracking-wide border-b pb-1 mb-2">2. Purchase Price &amp; Earnest Money</p>
             <p>
               The total purchase price is <strong>{fmt(purchasePrice)}</strong>. Buyer shall deposit earnest money of <strong>{fmt(earnestMoney)}</strong> within 3 business days of execution of this Agreement. Earnest money shall be credited toward the purchase price at closing.
             </p>

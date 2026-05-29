@@ -86,7 +86,7 @@ export default function JointVentureContractGenerator() {
       {/* LEFT: Inputs */}
       <div className="space-y-5">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-100 pb-1">Party 1</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-200 pb-1">Party 1</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Full Name" value={party1Name} onChange={setParty1Name} placeholder="Jane Doe" className="col-span-2" />
             <Field label="Role / Contribution" value={party1Role} onChange={setParty1Role} placeholder="Deal Finder / Wholesaler" className="col-span-2" />
@@ -95,7 +95,7 @@ export default function JointVentureContractGenerator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-purple-600 mb-3 border-b border-purple-100 pb-1">Party 2</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-purple-600 mb-3 border-b border-purple-200 pb-1">Party 2</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Full Name" value={party2Name} onChange={setParty2Name} placeholder="John Smith" className="col-span-2" />
             <Field label="Role / Contribution" value={party2Role} onChange={setParty2Role} placeholder="Funding / Operations" className="col-span-2" />
@@ -104,7 +104,7 @@ export default function JointVentureContractGenerator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-100 pb-1">Property</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-200 pb-1">Property</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Street Address" value={propertyAddress} onChange={setPropertyAddress} placeholder="123 Main St" className="col-span-2" />
             <Field label="City" value={city} onChange={setCity} placeholder="Portland" />
@@ -114,7 +114,7 @@ export default function JointVentureContractGenerator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-100 pb-1">Deal Financials</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-200 pb-1">Deal Financials</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Purchase Price ($)" value={purchasePrice} onChange={setPurchasePrice} placeholder="150000" type="number" />
             <Field label="Projected Profit ($)" value={projectedProfit} onChange={setProjectedProfit} placeholder="30000" type="number" />
@@ -148,7 +148,7 @@ export default function JointVentureContractGenerator() {
           </Button>
         </div>
 
-        <div ref={reportRef} className="bg-white rounded-2xl border border-border p-6 text-sm space-y-4 font-serif leading-relaxed">
+        <div ref={reportRef} className="bg-white rounded-2xl border border-border p-6 text-sm space-y-4 font-serif leading-relaxed text-gray-900">
           {/* Disclaimer */}
           <div className="bg-amber-50 border border-amber-300 rounded-lg px-4 py-3 flex gap-2 items-start">
             <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
@@ -183,7 +183,7 @@ export default function JointVentureContractGenerator() {
 
           {/* Contributions */}
           <div>
-            <p className="font-bold font-sans text-xs uppercase tracking-wide border-b pb-1 mb-2">2. Contributions & Roles</p>
+            <p className="font-bold font-sans text-xs uppercase tracking-wide border-b pb-1 mb-2">2. Contributions &amp; Roles</p>
             <p><strong>{party1Name || '___________'}</strong> shall be responsible for: {party1Role || '___________'}.</p>
             <p className="mt-1"><strong>{party2Name || '___________'}</strong> shall be responsible for: {party2Role || '___________'}.</p>
           </div>

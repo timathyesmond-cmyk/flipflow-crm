@@ -82,7 +82,7 @@ export default function AssignmentContractGenerator() {
       {/* LEFT: Inputs */}
       <div className="space-y-5">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-100 pb-1">Parties</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 border-b border-blue-200 pb-1">Parties</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Assignor (Wholesaler)" value={assignorName} onChange={setAssignorName} placeholder="Jane Doe" className="col-span-2" />
             <Field label="Assignee (End Buyer)" value={assigneeName} onChange={setAssigneeName} placeholder="John Buyer and/or Assigns" className="col-span-2" />
@@ -91,7 +91,7 @@ export default function AssignmentContractGenerator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-100 pb-1">Property</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-3 border-b border-amber-200 pb-1">Property</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Street Address" value={propertyAddress} onChange={setPropertyAddress} placeholder="123 Main St" className="col-span-2" />
             <Field label="City" value={city} onChange={setCity} placeholder="Portland" />
@@ -101,7 +101,7 @@ export default function AssignmentContractGenerator() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-100 pb-1">Contract & Fee Details</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-3 border-b border-emerald-200 pb-1">Contract &amp; Fee Details</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Original Contract Date" value={originalContractDate} onChange={setOriginalContractDate} type="date" />
             <Field label="Original Purchase Price ($)" value={originalPurchasePrice} onChange={setOriginalPurchasePrice} placeholder="150000" type="number" />
@@ -136,7 +136,7 @@ export default function AssignmentContractGenerator() {
           </Button>
         </div>
 
-        <div ref={reportRef} className="bg-white rounded-2xl border border-border p-6 text-sm space-y-4 font-serif leading-relaxed">
+        <div ref={reportRef} className="bg-white rounded-2xl border border-border p-6 text-sm space-y-4 font-serif leading-relaxed text-gray-900">
           {/* Disclaimer */}
           <div className="bg-amber-50 border border-amber-300 rounded-lg px-4 py-3 flex gap-2 items-start">
             <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
