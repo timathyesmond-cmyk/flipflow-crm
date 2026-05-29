@@ -21,8 +21,8 @@ const TIER_INFO = {
 };
 
 const COLOR_MAP = {
-  amber:  { bg: 'bg-amber-50',  icon: 'text-amber-500',  btn: 'bg-amber-500 hover:bg-amber-600 text-white',  border: 'border-amber-200'  },
-  purple: { bg: 'bg-purple-50', icon: 'text-purple-600', btn: 'bg-purple-600 hover:bg-purple-700 text-white', border: 'border-purple-200' },
+  amber:  { bg: 'bg-amber-50 dark:bg-amber-900/20',  icon: 'text-amber-500',  btn: 'bg-amber-500 hover:bg-amber-600 text-white',  border: 'border-amber-200 dark:border-amber-700'  },
+  purple: { bg: 'bg-purple-50 dark:bg-purple-900/20', icon: 'text-purple-500 dark:text-purple-400', btn: 'bg-purple-600 hover:bg-purple-700 text-white', border: 'border-purple-200 dark:border-purple-700' },
 };
 
 export default function UpgradeGate({ requiredTier = 'pro' }) {
@@ -35,7 +35,7 @@ export default function UpgradeGate({ requiredTier = 'pro' }) {
     <div className="flex items-center justify-center min-h-[60vh] p-6">
       <div className={`max-w-sm w-full rounded-2xl border ${c.border} ${c.bg} p-8 text-center space-y-5 shadow-sm`}>
         <div className="flex justify-center">
-          <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+          <div className="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center">
             <Lock className="w-7 h-7 text-muted-foreground" />
           </div>
         </div>
