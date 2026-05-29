@@ -61,12 +61,26 @@ Deno.serve(async (req) => {
       if (!fallback.ok) {
         return Response.json({ error: 'Failed to cancel subscription' }, { status: 500 });
       }
+      // Immediate cancel confirmed — mark as canceled now
+      await base44.asServiceRole.entities.UserSubscription.update(sub.id, { status: 'canceled' });
+      console.log(`Immediately canceled subscription ${sub.subscription_id} for ${user.email}`);
+      return Response.json({ success: true, immediate: true });
     }
 
-    await base44.asServiceRole.entities.UserSubscription.update(sub.id, { status: 'canceled' });
-    console.log(`Canceled subscription ${sub.subscription_id} for ${user.email}`);
+    const cancelData = await response.json();
+    const wixStatus = cancelData.subscription?.status;
 
-    return Response.json({ success: true });
+    if (wixStatus === 'CANCELED') {
+      // Immediate cancel — revoke access now
+      await base44.asServiceRole.entities.UserSubscription.update(sub.id, { status: 'canceled' });
+      console.log(`Immediately canceled subscription ${sub.subscription_id} for ${user.email}`);
+    } else {
+      // Soft cancel — Wix keeps the sub ACTIVE until billing cycle ends;
+      // the subscription_contract_canceled webhook will flip it to canceled then.
+      console.log(`Soft-canceled subscription ${sub.subscription_id} for ${user.email} — access remains until billing cycle ends`);
+    }
+
+    return Response.json({ success: true, immediate: wixStatus === 'CANCELED' });
   } catch (error) {
     console.error('cancel-subscription error:', error);
     return Response.json({ error: error.message }, { status: 500 });
