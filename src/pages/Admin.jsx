@@ -18,7 +18,7 @@ export default function Admin() {
   const [currentUser, setCurrentUser] = useState(null);
   const [checking, setChecking] = useState(true);
   const [search, setSearch] = useState('');
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -71,8 +71,10 @@ export default function Admin() {
     { label: 'Banned', value: bannedCount, icon: Ban, color: 'text-red-500' },
   ];
 
+  const selectedUser = users.find(u => u.id === selectedUserId) || null;
+
   const openUser = (user) => {
-    setSelectedUser(user);
+    setSelectedUserId(user.id);
     setDrawerOpen(true);
   };
 
@@ -197,7 +199,6 @@ export default function Admin() {
         onUserUpdated={() => {
           queryClient.invalidateQueries({ queryKey: ['admin-users'] });
           if (selectedUser) {
-            // refresh selected user data from updated list
             queryClient.invalidateQueries({ queryKey: ['admin-user-deals', selectedUser.email] });
             queryClient.invalidateQueries({ queryKey: ['admin-user-contacts', selectedUser.email] });
           }
