@@ -37,11 +37,40 @@ const TEMPLATES = {
   },
 };
 
+function wrapInBrandedHtml(name, subject, plainBody) {
+  const paragraphs = plainBody
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .map(line => '<p style="margin:0 0 12px;font-size:14px;color:#475569;line-height:1.7;">' + line + '</p>')
+    .join('');
+
+  return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"></head>'
+    + '<body style="margin:0;padding:0;background:#f1f5f9;font-family:\'Helvetica Neue\',Arial,sans-serif;">'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:40px 0;">'
+    + '<tr><td align="center">'
+    + '<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">'
+    + '<tr><td style="background:linear-gradient(135deg,#1e3a5f 0%,#2d5282 100%);padding:32px 40px;text-align:center;">'
+    + '<table cellpadding="0" cellspacing="0" align="center"><tr>'
+    + '<td style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;">'
+    + '<span style="font-size:22px;font-weight:800;color:#f6ad55;letter-spacing:-0.5px;">&#127968; FlipFlow</span>'
+    + '</td></tr></table>'
+    + '<p style="margin:12px 0 0;color:rgba(255,255,255,0.7);font-size:11px;letter-spacing:2px;text-transform:uppercase;">Wholesale CRM</p>'
+    + '</td></tr>'
+    + '<tr><td style="padding:40px;">'
+    + paragraphs
+    + '</td></tr>'
+    + '<tr><td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:24px 40px;text-align:center;">'
+    + '<p style="margin:0;font-size:13px;font-weight:600;color:#1e3a5f;">&#127968; FlipFlow Wholesale CRM</p>'
+    + '</td></tr>'
+    + '</table></td></tr></table></body></html>';
+}
+
 function applyPlaceholders(text, contactName, deal) {
   return (text || '')
     .replace(/\{\{name\}\}/g, contactName || '')
     .replace(/\{\{address\}\}/g, deal?.property_address || '')
-    .replace(/\{\{offer_price\}\}/g, deal?.offer_price ? `$${deal.offer_price.toLocaleString()}` : '')
+    .replace(/\{\{offer_price\}\}/g, deal?.offer_price ? '$' + deal.offer_price.toLocaleString() : '')
     .replace(/\{\{closing_date\}\}/g, deal?.closing_date || '');
 }
 
@@ -86,10 +115,12 @@ export default function FollowUpEmailDialog({ open, onOpenChange, deal, contactN
 
   const handleSend = async () => {
     setSending(true);
+    const htmlBody = wrapInBrandedHtml(contactName || contactType, subject, body);
     await base44.integrations.Core.SendEmail({
       to: contactEmail,
       subject,
-      body,
+      body: htmlBody,
+      from_name: 'FlipFlow CRM',
     });
     await base44.entities.Activity.create({
       deal_id: deal.id,
