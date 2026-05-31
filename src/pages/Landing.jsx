@@ -192,6 +192,15 @@ export default function Landing() {
   const [playing, setPlaying] = useState(true);
 
   useEffect(() => {
+    // Capture referral code from URL
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      localStorage.setItem('flipflow_ref', ref);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!playing) return;
     const t = setInterval(() => setSlide(s => (s + 1) % DEMO_SLIDES.length), 3500);
     return () => clearInterval(t);

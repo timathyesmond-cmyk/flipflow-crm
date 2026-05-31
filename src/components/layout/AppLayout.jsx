@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
@@ -28,6 +28,33 @@ function getRequiredTier(pathname) {
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useAuth();
+
+  // Claim any pending referral code after user logs in
+  useEffect(() => {
+    if (!user?.email) return;
+    const refCode = localStorage.getItem('flipflow_ref');
+    if (!refCode) return;
+    localStorage.removeItem('flipflow_ref');
+    // Check we don't already have a referral record for this email
+    // Decode base64 referral code to get referrer email
+    let referrerEmail = null;
+    try { referrerEmail = atob(refCode + '=='); } catch (e) { return; }
+    if (!referrerEmail || referrerEmail === user.email) return;
+
+    import('@/api/base44Client').then(({ base44 }) => {
+      base44.entities.Referral.filter({ referred_email: user.email }).then(existing => {
+        if (existing.length === 0) {
+          base44.entities.Referral.create({
+            referrer_email: referrerEmail,
+            referred_email: user.email,
+            referral_code: refCode,
+            status: 'pending',
+            reward_months: 1,
+          });
+        }
+      });
+    });
+  }, [user?.email]);
   const location = useLocation();
   const { trialStatus, daysRemaining } = useTrial(user);
   const { tier: subTier, loading: subLoading } = useSubscription(user);
