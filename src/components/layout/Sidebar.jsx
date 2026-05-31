@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings, Lightbulb, Shield, Building2 } from 'lucide-react';
+import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings, Lightbulb, Shield, Building2, HelpCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { cn } from '@/lib/utils';
 import GlobalSearch from './GlobalSearch';
@@ -15,6 +15,7 @@ const navItems = [
   { label: 'Calculator', path: '/calculator', icon: CalculatorIcon },
   { label: 'Portfolio', path: '/portfolio', icon: Building2 },
   { label: 'Suggestions', path: '/suggestions', icon: Lightbulb },
+  { label: 'Help', path: '/help', icon: HelpCircle },
   { label: 'Settings', path: '/settings', icon: Settings },
 ];
 

@@ -255,6 +255,55 @@ ESTIMATED TOTAL REPAIR COST: $___________
 RECOMMENDATION: [ ] Buy  [ ] Pass  [ ] Negotiate Down`,
   },
   {
+    id: 'first-deal-checklist',
+    title: 'First Deal Checklist',
+    category: 'Wholesale',
+    description: 'Step-by-step checklist to guide you from zero to closing your first wholesale deal.',
+    content: `FIRST WHOLESALE DEAL CHECKLIST
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PREP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ] Study the MAO formula and run practice numbers
+[ ] Pick your target market (city / zip codes)
+[ ] Build a list of at least 5 cash buyers
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MARKETING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ] Drive for dollars or set up a direct mail campaign
+[ ] Generate your first motivated seller lead
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTREACH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ] Make your first seller phone call
+[ ] Schedule a property walkthrough appointment
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DUE DILIGENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ] Walk the property and estimate repairs
+[ ] Pull comps and calculate ARV
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OFFER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ] Submit your first written offer
+[ ] Get the purchase agreement signed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CLOSING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ] Send the deal to your cash buyer list
+[ ] Negotiate and sign an assignment contract
+[ ] Open escrow / work with a title company
+[ ] Collect your assignment fee at closing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You did it! Now scale: build more leads, more buyers, repeat.`,
+  },
+  {
     id: 'late-rent-notice',
     title: 'Late Rent / Pay or Quit Notice',
     category: 'Rental',
@@ -294,8 +343,9 @@ Landlord/Agent Name
 ];
 
 const CATEGORY_COLORS = {
-  'Rental':     'bg-blue-100 text-blue-700',
-  'Fix & Flip': 'bg-amber-100 text-amber-700',
+  'Rental':     'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  'Fix & Flip': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+  'Wholesale':  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
 };
 
 export default function PortfolioResources() {
