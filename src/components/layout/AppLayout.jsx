@@ -10,6 +10,7 @@ import TrialExpiredPaywall from '@/components/TrialExpiredPaywall';
 import { useSubscription } from '@/hooks/useSubscription';
 import UpgradeGate from '@/components/UpgradeGate';
 import TrialBanner from '@/components/TrialBanner';
+import OnboardingNameModal from '@/components/OnboardingNameModal';
 
 const TIER_RANK = { basic: 1, wholesale: 2, pro: 3, trial: 3 };
 const ROUTE_REQUIRED_TIER = {
@@ -27,7 +28,15 @@ function getRequiredTier(pathname) {
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
   const { user } = useAuth();
+
+  // Show name modal for users who haven't set their name yet
+  useEffect(() => {
+    if (user && !user.full_name) {
+      setShowNameModal(true);
+    }
+  }, [user?.email]);
 
   // Claim any pending referral code after user logs in
   useEffect(() => {
@@ -80,6 +89,12 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      {showNameModal && user && !user.full_name && (
+        <OnboardingNameModal
+          user={user}
+          onComplete={() => setShowNameModal(false)}
+        />
+      )}
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} effectiveTier={effectiveTier} />
 
       {/* Mobile header */}
