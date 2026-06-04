@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import ContactFormDialog from '@/components/contacts/ContactFormDialog';
 import BuyerProfileDialog from '@/components/contacts/BuyerProfileDialog';
 import ImportDialog from '@/components/ImportDialog';
+import { useAuth } from '@/lib/AuthContext';
 
 const CONTACT_FIELDS = [
   { key: 'name', required: true }, { key: 'type' }, { key: 'phone' },
@@ -47,6 +48,7 @@ const typeLabels = {
 };
 
 export default function Contacts() {
+  const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -57,8 +59,9 @@ export default function Contacts() {
   const queryClient = useQueryClient();
 
   const { data: contacts = [], isLoading } = useQuery({
-    queryKey: ['contacts'],
-    queryFn: () => base44.entities.Contact.list('-updated_date'),
+    queryKey: ['contacts', user?.id],
+    queryFn: () => base44.entities.Contact.filter({ created_by_id: user.id }, '-updated_date'),
+    enabled: !!user,
   });
 
   const createMutation = useMutation({

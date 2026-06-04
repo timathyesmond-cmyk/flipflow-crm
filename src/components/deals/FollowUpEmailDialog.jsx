@@ -81,9 +81,13 @@ export default function FollowUpEmailDialog({ open, onOpenChange, deal, contactN
   const [sending, setSending] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
+  const [currentUser, setCurrentUser] = React.useState(null);
+  React.useEffect(() => { base44.auth.me().then(setCurrentUser).catch(() => {}); }, []);
+
   const { data: customTemplates = [] } = useQuery({
-    queryKey: ['email_templates'],
-    queryFn: () => base44.entities.EmailTemplate.list('-created_date'),
+    queryKey: ['email_templates', currentUser?.id],
+    queryFn: () => base44.entities.EmailTemplate.filter({ created_by_id: currentUser.id }, '-created_date'),
+    enabled: !!currentUser,
   });
 
   useEffect(() => {

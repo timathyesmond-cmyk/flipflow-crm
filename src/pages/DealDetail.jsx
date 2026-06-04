@@ -24,6 +24,7 @@ import FollowUpEmailDialog from '@/components/deals/FollowUpEmailDialog';
 import TaskReminderCard from '@/components/deals/TaskReminderCard';
 import PropertyPhotos from '@/components/deals/PropertyPhotos';
 import DealContracts from '@/components/deals/DealContracts';
+import { useAuth } from '@/lib/AuthContext';
 
 const stageConfig = {
   lead: { label: 'Lead', color: 'bg-muted text-muted-foreground' },
@@ -74,12 +75,15 @@ export default function DealDetail() {
   const [showEdit, setShowEdit] = useState(false);
   const [emailTarget, setEmailTarget] = useState(null);
 
+  const { user } = useAuth();
+
   const { data: deal, isLoading } = useQuery({
-    queryKey: ['deal', id],
+    queryKey: ['deal', id, user?.id],
     queryFn: async () => {
-      const deals = await base44.entities.Deal.filter({ id });
+      const deals = await base44.entities.Deal.filter({ id, created_by_id: user.id });
       return deals[0];
     },
+    enabled: !!user,
   });
 
   const updateMutation = useMutation({

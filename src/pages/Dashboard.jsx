@@ -16,8 +16,9 @@ import TodayFollowUps from '@/components/dashboard/TodayFollowUps';
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: deals = [], isLoading } = useQuery({
-    queryKey: ['deals'],
-    queryFn: () => base44.entities.Deal.list('-updated_date'),
+    queryKey: ['deals', user?.id],
+    queryFn: () => base44.entities.Deal.filter({ created_by_id: user.id }, '-updated_date'),
+    enabled: !!user,
   });
 
   const totalDeals = deals.length;

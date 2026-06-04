@@ -11,6 +11,7 @@ import StageColumn from '@/components/deals/StageColumn';
 import DealCard from '@/components/deals/DealCard';
 import DealFormDialog from '@/components/deals/DealFormDialog';
 import ImportDialog from '@/components/ImportDialog';
+import { useAuth } from '@/lib/AuthContext';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
@@ -36,6 +37,7 @@ const DEAL_SAMPLE = {
 const stages = ['lead', 'contacted', 'under_contract', 'assigned', 'closed', 'dead'];
 
 export default function Deals() {
+  const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [view, setView] = useState('board');
@@ -47,8 +49,9 @@ export default function Deals() {
   const queryClient = useQueryClient();
 
   const { data: deals = [], isLoading } = useQuery({
-    queryKey: ['deals'],
-    queryFn: () => base44.entities.Deal.list('-updated_date'),
+    queryKey: ['deals', user?.id],
+    queryFn: () => base44.entities.Deal.filter({ created_by_id: user.id }, '-updated_date'),
+    enabled: !!user,
   });
 
   const createMutation = useMutation({

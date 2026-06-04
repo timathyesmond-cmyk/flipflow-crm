@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -71,11 +71,15 @@ function TemplateForm({ initial, onSave, onCancel, isLoading }) {
 export default function SmsTemplates() {
   const [showNew, setShowNew] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
+  useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+
   const { data: templates = [], isLoading } = useQuery({
-    queryKey: ['sms-templates'],
-    queryFn: () => base44.entities.SmsTemplate.list('-updated_date'),
+    queryKey: ['sms-templates', user?.id],
+    queryFn: () => base44.entities.SmsTemplate.filter({ created_by_id: user.id }, '-updated_date'),
+    enabled: !!user,
   });
 
   const createMutation = useMutation({

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import { Loader2, MapPin } from 'lucide-react';
@@ -54,10 +55,12 @@ async function geocodeAddress(address, city, state, zip) {
 export default function DealsMap() {
   const [markers, setMarkers] = useState([]);
   const [geocoding, setGeocoding] = useState(false);
+  const { user } = useAuth();
 
   const { data: deals = [], isLoading } = useQuery({
-    queryKey: ['deals'],
-    queryFn: () => base44.entities.Deal.list('-updated_date'),
+    queryKey: ['deals', user?.id],
+    queryFn: () => base44.entities.Deal.filter({ created_by_id: user.id }, '-updated_date'),
+    enabled: !!user,
   });
 
   useEffect(() => {

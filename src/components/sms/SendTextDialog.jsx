@@ -16,10 +16,14 @@ function applyTemplate(msg, vars) {
 
 export default function SendTextDialog({ open, onOpenChange, toName, toPhone, vars = {} }) {
   const [message, setMessage] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => { base44.auth.me().then(setCurrentUser).catch(() => {}); }, []);
 
   const { data: templates = [] } = useQuery({
-    queryKey: ['sms-templates'],
-    queryFn: () => base44.entities.SmsTemplate.list(),
+    queryKey: ['sms-templates', currentUser?.id],
+    queryFn: () => base44.entities.SmsTemplate.filter({ created_by_id: currentUser.id }),
+    enabled: !!currentUser,
   });
 
   useEffect(() => {

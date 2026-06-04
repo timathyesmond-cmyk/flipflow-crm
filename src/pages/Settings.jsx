@@ -52,8 +52,9 @@ export default function Settings() {
   const activeSub = subscriptions.find(s => s.status === 'active') || null;
 
   const { data: templates = [], isLoading } = useQuery({
-    queryKey: ['email_templates'],
-    queryFn: () => base44.entities.EmailTemplate.list('-created_date'),
+    queryKey: ['email_templates', user?.id],
+    queryFn: () => base44.entities.EmailTemplate.filter({ created_by_id: user.id }, '-created_date'),
+    enabled: !!user,
   });
 
   const createMutation = useMutation({

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOutletContext } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -47,6 +48,7 @@ function fmtDate(d) { return d ? new Date(d).toLocaleDateString() : '—'; }
 export default function Portfolio() {
   const qc = useQueryClient();
   const { effectiveTier } = useOutletContext() || {};
+  const { user } = useAuth();
   const TIER_RANK = { basic: 1, wholesale: 2, pro: 3, trial: 3 };
   const isPro = (TIER_RANK[effectiveTier] || 0) >= TIER_RANK['pro'];
 
@@ -58,19 +60,19 @@ export default function Portfolio() {
   const [editFlip, setEditFlip] = useState(null);
 
   const { data: rentals = [] } = useQuery({
-    queryKey: ['rental-properties'],
-    queryFn: () => base44.entities.RentalProperty.list(),
-    enabled: isPro,
+    queryKey: ['rental-properties', user?.id],
+    queryFn: () => base44.entities.RentalProperty.filter({ created_by_id: user.id }),
+    enabled: isPro && !!user,
   });
   const { data: tenants = [] } = useQuery({
-    queryKey: ['tenants'],
-    queryFn: () => base44.entities.Tenant.list(),
-    enabled: isPro,
+    queryKey: ['tenants', user?.id],
+    queryFn: () => base44.entities.Tenant.filter({ created_by_id: user.id }),
+    enabled: isPro && !!user,
   });
   const { data: flips = [] } = useQuery({
-    queryKey: ['fix-and-flips'],
-    queryFn: () => base44.entities.FixAndFlip.list(),
-    enabled: isPro,
+    queryKey: ['fix-and-flips', user?.id],
+    queryFn: () => base44.entities.FixAndFlip.filter({ created_by_id: user.id }),
+    enabled: isPro && !!user,
   });
 
   const saveRental = useMutation({
