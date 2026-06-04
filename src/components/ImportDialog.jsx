@@ -16,11 +16,41 @@ export default function ImportDialog({ open, onOpenChange, entityName, fields, s
     setResult(null);
   };
 
+  const HEADER_ALIASES = {
+    'address': 'property_address',
+    'property address': 'property_address',
+    'city': 'city',
+    'state': 'state',
+    'zip': 'zip',
+    'zip code': 'zip',
+    'living square feet': 'sqft',
+    'sqft': 'sqft',
+    'square feet': 'sqft',
+    'bedrooms': 'bedrooms',
+    'beds': 'bedrooms',
+    'bathrooms': 'bathrooms',
+    'baths': 'bathrooms',
+    'property type': 'property_type',
+    'year built': 'notes',
+  };
+
+  const parseValues = (line) => {
+    const values = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '"') { inQuotes = !inQuotes; }
+      else if (line[i] === ',' && !inQuotes) { values.push(current); current = ''; }
+      else { current += line[i]; }
+    }
+    values.push(current);
+    return values;
+  };
+
   const handleImport = async () => {
     if (!file) return;
     setStatus('uploading');
 
-    // Parse CSV manually (reliable, no AI needed)
     const text = await file.text();
     const lines = text.trim().split(/\r?\n/);
     if (lines.length < 2) {
@@ -29,33 +59,36 @@ export default function ImportDialog({ open, onOpenChange, entityName, fields, s
       return;
     }
 
-    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-    const records = lines.slice(1).map(line => {
-      // Handle quoted fields with commas inside
-      const values = [];
-      let current = '';
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        if (line[i] === '"') { inQuotes = !inQuotes; }
-        else if (line[i] === ',' && !inQuotes) { values.push(current); current = ''; }
-        else { current += line[i]; }
-      }
-      values.push(current);
+    const rawHeaders = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    const firstNameIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'owner 1 first name');
+    const lastNameIdx = rawHeaders.findIndex(h => h.toLowerCase() === 'owner 1 last name');
 
-      const record = {};
-      headers.forEach((h, i) => {
-        const field = fields.find(f => f.key === h);
-        const val = (values[i] ?? '').trim();
-        if (val !== '') {
-          record[h] = field?.type === 'number' ? parseFloat(val) || 0 : val;
+    const records = lines.slice(1).map(line => {
+      const values = parseValues(line);
+      const record = { stage: 'lead' };
+
+      rawHeaders.forEach((rawHeader, idx) => {
+        const normalized = rawHeader.toLowerCase().trim();
+        const mappedKey = HEADER_ALIASES[normalized] || fields.find(f => f.key === rawHeader)?.key;
+        const val = (values[idx] ?? '').trim();
+        if (mappedKey && val !== '') {
+          const field = fields.find(f => f.key === mappedKey);
+          record[mappedKey] = field?.type === 'number' ? parseFloat(val) || 0 : val;
         }
       });
+
+      // Auto-combine Owner 1 First + Last Name into seller_name
+      const first = firstNameIdx !== -1 ? (values[firstNameIdx] ?? '').trim() : '';
+      const last = lastNameIdx !== -1 ? (values[lastNameIdx] ?? '').trim() : '';
+      const fullName = `${first} ${last}`.trim();
+      if (fullName) record['seller_name'] = fullName;
+
       return record;
-    }).filter(r => Object.keys(r).length > 0);
+    }).filter(r => r.property_address);
 
     if (records.length === 0) {
       setStatus('error');
-      setResult({ error: 'No valid records found in the file.' });
+      setResult({ error: 'No properties with valid addresses found. Make sure your file has an "Address" or "property_address" column.' });
       return;
     }
 
