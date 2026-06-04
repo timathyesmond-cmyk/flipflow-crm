@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Shield, Users, Loader2, Mail, Crown, Search, Ban, CheckCircle } from 'lucide-react';
+import DispoQueue from '@/components/admin/DispoQueue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -189,6 +190,11 @@ export default function Admin() {
             <p className="text-sm">No users found.</p>
           </div>
         )}
+      </div>
+
+      {/* Dispo Queue */}
+      <div className="border-t pt-6">
+        <DispoQueue />
       </div>
 
       {/* User detail drawer */}

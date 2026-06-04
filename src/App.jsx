@@ -22,6 +22,7 @@ import Pricing from './pages/Pricing';
 import ThankYou from './pages/ThankYou';
 import HelpCenter from './pages/HelpCenter';
 import Referral from './pages/Referral';
+import Dispo from './pages/Dispo';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated, authChecked } = useAuth();
@@ -69,6 +70,7 @@ const AuthenticatedApp = () => {
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/help" element={<HelpCenter />} />
         <Route path="/referral" element={<Referral />} />
+        <Route path="/dispo" element={<Dispo />} />
         <Route path="/pricing" element={<Pricing />} />
       </Route>
       <Route path="/thank-you" element={<ThankYou />} />

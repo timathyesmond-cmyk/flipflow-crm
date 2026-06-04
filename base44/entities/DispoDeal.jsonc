@@ -1,0 +1,103 @@
+{
+  "name": "DispoDeal",
+  "type": "object",
+  "properties": {
+    "submitter_email": {
+      "type": "string",
+      "description": "Email of the wholesaler who submitted"
+    },
+    "submitter_name": {
+      "type": "string"
+    },
+    "property_address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "single_family",
+        "multi_family",
+        "townhouse",
+        "condo",
+        "land",
+        "commercial",
+        "other"
+      ],
+      "default": "single_family"
+    },
+    "bedrooms": {
+      "type": "number"
+    },
+    "bathrooms": {
+      "type": "number"
+    },
+    "sqft": {
+      "type": "number"
+    },
+    "asking_price": {
+      "type": "number",
+      "description": "Wholesaler's asking price"
+    },
+    "arv": {
+      "type": "number",
+      "description": "After Repair Value"
+    },
+    "repair_estimate": {
+      "type": "number"
+    },
+    "assignment_fee": {
+      "type": "number"
+    },
+    "closing_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "description": {
+      "type": "string",
+      "description": "Additional details about the deal"
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Property photo URLs"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewing",
+        "matched",
+        "closed",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Admin review status"
+    },
+    "matched_buyer_email": {
+      "type": "string",
+      "description": "Email of the matched buyer contact"
+    },
+    "matched_buyer_name": {
+      "type": "string"
+    },
+    "admin_notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "property_address",
+    "submitter_email",
+    "status"
+  ]
+}
