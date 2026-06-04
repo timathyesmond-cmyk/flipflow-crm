@@ -59,10 +59,15 @@ export default function ImportDialog({ open, onOpenChange, entityName, fields, s
       return;
     }
 
-    await base44.entities[entityName].bulkCreate(records);
-    setStatus('success');
-    setResult({ count: records.length });
-    onSuccess?.();
+    try {
+      await base44.entities[entityName].bulkCreate(records);
+      setStatus('success');
+      setResult({ count: records.length });
+      onSuccess?.();
+    } catch (err) {
+      setStatus('error');
+      setResult({ error: err.message || 'Failed to import records. Please check your data format and column headers.' });
+    }
   };
 
   const downloadSample = () => {
