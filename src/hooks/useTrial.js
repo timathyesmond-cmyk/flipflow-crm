@@ -6,7 +6,11 @@ export function useTrial(user) {
   const [daysRemaining, setDaysRemaining] = useState(null);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setTrialStatus('idle');
+      setDaysRemaining(null);
+      return;
+    }
 
     if (user.role === 'admin' || user.gifted_membership === true) {
       setTrialStatus('active');
@@ -26,7 +30,7 @@ export function useTrial(user) {
         setTrialStatus(data.trialStatus === 'active' ? 'active' : 'expired');
       } catch (err) {
         console.error('Failed to fetch trial status:', err);
-        if (!cancelled) setTrialStatus('expired');
+        if (!cancelled) setTrialStatus('unknown');
       }
     };
 

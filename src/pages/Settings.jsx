@@ -12,7 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Plus, Pencil, Trash2, Mail, Settings as SettingsIcon, X, Save, CreditCard, Zap, Star, Crown, CheckCircle, Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useTrial } from '@/hooks/useTrial';
 
 const STAGE_LABELS = {
   any: 'Any Stage', lead: 'Lead', contacted: 'Contacted',
@@ -30,9 +31,9 @@ const EMPTY = { name: '', deal_stage: 'any', audience: 'seller', subject: '', bo
 const PLACEHOLDER_HINT = '{{name}}, {{address}}, {{offer_price}}, {{closing_date}}';
 
 const PLAN_TIERS = [
-  { id: 'basic', label: 'Basic', price: '$14.99/mo', icon: Zap, color: 'text-blue-500', features: ['Up to 50 deals', 'Basic calculator', 'Email templates'] },
-  { id: 'wholesale', label: 'Wholesale', price: '$24.99/mo', icon: Star, color: 'text-amber-500', features: ['Unlimited deals', 'Advanced calculator', 'Buyer matching', 'SMS templates'] },
-  { id: 'pro', label: 'Pro', price: '$49.99/mo', icon: Crown, color: 'text-purple-500', features: ['Everything in Wholesale', 'Contracts generator', 'Subject-To & Seller Finance', 'Priority support'] },
+  { id: 'basic', label: 'Basic', price: '$14.99/mo', icon: Zap, color: 'text-blue-500', features: ['Dashboard & overview', 'Unlimited deal tracking', 'Contact management', 'Interactive map view', 'Activity timeline & notes'] },
+  { id: 'wholesale', label: 'Wholesale', price: '$24.99/mo', icon: Star, color: 'text-amber-500', features: ['Everything in Basic', 'MAO / Wholesale Calculator', 'Max allowable offer analysis', 'Deal profit estimator'] },
+  { id: 'pro', label: 'Pro', price: '$49.99/mo', icon: Crown, color: 'text-purple-500', features: ['Everything in Wholesale', 'Sub-To & Seller Finance calculators', 'Contract generators (PDF)', 'Email & SMS templates', 'Suggestions board'] },
 ];
 
 export default function Settings() {
@@ -43,6 +44,8 @@ export default function Settings() {
   const [user, setUser] = useState(null);
 
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+
+  const { trialStatus, daysRemaining } = useTrial(user);
 
   const { data: subscriptions = [] } = useQuery({
     queryKey: ['my-subscription', user?.email],
@@ -124,10 +127,26 @@ export default function Settings() {
                   <Badge className="bg-emerald-100 text-emerald-700 border-0"><CheckCircle className="w-3 h-3 mr-1" />Active</Badge>
                 </CardContent>
               </Card>
+            ) : trialStatus === 'active' ? (
+              <Card className="border-2 border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20">
+                <CardContent className="py-4 px-5 flex items-center gap-4">
+                  <Zap className="w-8 h-8 text-emerald-500" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm">Free Trial</p>
+                    <p className="text-xs text-muted-foreground">
+                      {daysRemaining !== null
+                        ? `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} remaining`
+                        : 'Full access during your trial'}
+                    </p>
+                  </div>
+                  <Badge className="bg-emerald-100 text-emerald-700 border-0">Trial</Badge>
+                </CardContent>
+              </Card>
             ) : (
               <Card className="border-dashed">
-                <CardContent className="py-5 px-5">
+                <CardContent className="py-5 px-5 space-y-2">
                   <p className="text-sm text-muted-foreground">You don't have an active subscription.</p>
+                  <Link to="/pricing" className="text-sm text-primary hover:underline">View plans →</Link>
                 </CardContent>
               </Card>
             )}

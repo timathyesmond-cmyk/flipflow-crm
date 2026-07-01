@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.35';
 
 const TIER_PRICES = {
   basic:     { price: '14.99', name: 'FlipFlow Basic Plan' },

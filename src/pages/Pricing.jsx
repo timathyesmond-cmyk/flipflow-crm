@@ -3,7 +3,7 @@ import { Check, Zap, Star, Crown, LogOut, Loader2, AlertCircle } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { useNavigate } from 'react-router-dom';
+
 
 const TIERS = [
   {
@@ -69,7 +69,6 @@ const COLOR_MAP = {
 export default function Pricing({ isPaywall = false, currentTier = null }) {
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   const handleSubscribe = async (tierId) => {
     setLoading(tierId);

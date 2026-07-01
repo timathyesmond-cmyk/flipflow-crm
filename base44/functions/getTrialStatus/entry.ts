@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.35';
 
 const TRIAL_DAYS = 7;
 const DAY_MS = 24 * 60 * 60 * 1000;

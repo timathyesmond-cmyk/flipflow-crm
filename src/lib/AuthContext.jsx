@@ -65,17 +65,20 @@ export const AuthProvider = ({ children }) => {
               type: 'user_not_registered',
               message: 'User not registered for this app'
             });
+            setAuthChecked(true);
           } else {
             setAuthError({
               type: reason,
               message: appError.message
             });
+            setAuthChecked(true);
           }
         } else {
           setAuthError({
             type: 'unknown',
             message: appError.message || 'Failed to load app'
           });
+          setAuthChecked(true);
         }
         setIsLoadingPublicSettings(false);
         setIsLoadingAuth(false);
@@ -86,6 +89,7 @@ export const AuthProvider = ({ children }) => {
         type: 'unknown',
         message: error.message || 'An unexpected error occurred'
       });
+      setAuthChecked(true);
       setIsLoadingPublicSettings(false);
       setIsLoadingAuth(false);
     }

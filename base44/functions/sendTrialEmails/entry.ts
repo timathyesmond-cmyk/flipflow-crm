@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.35';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -81,7 +81,7 @@ const EMAILS = {
       ${tip('2️⃣', 'Bulk import from a spreadsheet', 'Use the <strong>Import</strong> button on the Deals page to upload a CSV and load all your leads at once — huge time-saver.')}
       ${tip('3️⃣', 'Use the pipeline board', 'Drag deals across stages — Lead → Contacted → Under Contract → Closed. Your Dashboard updates in real time.')}
       <p style="margin:20px 0 0;font-size:13px;color:#64748b;">The more deals in your pipeline, the better your Dashboard analytics get. Start adding today!</p>
-      <div style="text-align:center;margin-top:28px;">${btn('Open My Deals →', 'https://flipflowcrm.base44.app/deals')}</div>
+      <div style="text-align:center;margin-top:28px;">${btn('Open My Deals →', 'https://flipflowcrm.com/deals')}</div>
       <p style="margin:24px 0 0;font-size:13px;color:#64748b;">Happy wholesaling,<br><strong style="color:#1e3a5f;">The FlipFlow Team</strong></p>`
     ),
   },
@@ -94,7 +94,7 @@ const EMAILS = {
       ${mistakeTip('No cash buyer list before going under contract', 'Add buyers in <strong>Contacts</strong> tagged as cash buyers so you can blast them the second you have a deal.')}
       ${mistakeTip('Losing deals to slow paperwork', 'Use the <strong>Contract Generator</strong> in the Calculator tab — produce assignment contracts in seconds.')}
       <p style="margin:20px 0 0;font-size:14px;color:#475569;line-height:1.7;">You have all the tools — go close something this week 💪</p>
-      <div style="text-align:center;margin-top:28px;">${btn('Open FlipFlow →', 'https://flipflowcrm.base44.app/')}</div>
+      <div style="text-align:center;margin-top:28px;">${btn('Open FlipFlow →', 'https://flipflowcrm.com/')}</div>
       <p style="margin:24px 0 0;font-size:13px;color:#64748b;">Rooting for you,<br><strong style="color:#1e3a5f;">The FlipFlow Team</strong></p>`
     ),
   },

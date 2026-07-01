@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from 'next-themes';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -24,7 +24,10 @@ import HelpCenter from './pages/HelpCenter';
 import Referral from './pages/Referral';
 import Dispo from './pages/Dispo';
 
+const PUBLIC_PATHS = new Set(['/', '/pricing', '/help', '/thank-you']);
+
 const AuthenticatedApp = () => {
+  const location = useLocation();
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated, authChecked } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
@@ -44,13 +47,23 @@ const AuthenticatedApp = () => {
     // auth_required is handled below — show landing page instead of redirecting
   }
 
-  // Unauthenticated: show public marketing pages
+  // Unauthenticated: public pages or redirect to login for protected routes
   if (authChecked && !isAuthenticated) {
+    if (!PUBLIC_PATHS.has(location.pathname)) {
+      navigateToLogin();
+      return (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+        </div>
+      );
+    }
+
     return (
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/help" element={<HelpCenter />} />
+        <Route path="/thank-you" element={<ThankYou />} />
         <Route path="*" element={<LandingPage />} />
       </Routes>
     );

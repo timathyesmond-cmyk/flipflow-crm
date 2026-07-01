@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Copy, Check, Gift, Users, Trophy, Share2, Twitter, Mail, MessageSquare, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import { APP_URL } from '@/lib/utils';
 
 function generateReferralCode(email) {
   return btoa(email).replace(/=/g, '');
@@ -32,7 +33,7 @@ export default function Referral() {
   }, []);
 
   const referralCode = user ? generateReferralCode(user.email) : '';
-  const referralLink = user ? `https://flipflowcrm.base44.app/?ref=${referralCode}` : '';
+  const referralLink = user ? `${APP_URL}/?ref=${referralCode}` : '';
 
   const { data: referrals = [] } = useQuery({
     queryKey: ['referrals', user?.email],

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { base44 } from '@/api/base44Client';
 import { HandCoins } from 'lucide-react';
+import { APP_URL } from '@/lib/utils';
 
 export default function OnboardingNameModal({ user, onComplete }) {
   const [firstName, setFirstName] = useState('');
@@ -56,7 +57,7 @@ export default function OnboardingNameModal({ user, onComplete }) {
 <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">Add cash buyers in <strong>Contacts</strong> so you're ready to assign the second you're under contract.</p>
 </td></tr></table>
 <div style="text-align:center;margin-top:8px;">
-<a href="https://flipflowcrm.base44.app/" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#c97a1a,#f6ad55);color:#1e3a5f;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;">Open FlipFlow →</a>
+<a href="${APP_URL}/" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#c97a1a,#f6ad55);color:#1e3a5f;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;">Open FlipFlow →</a>
 </div>
 <p style="margin:28px 0 0;font-size:13px;color:#64748b;">Rooting for your first deal,<br><strong style="color:#1e3a5f;">The FlipFlow Team</strong></p>
 </td></tr>

@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import UserDetailDrawer from '@/components/admin/UserDetailDrawer';
 
-const ADMIN_EMAIL = 'timathyesmond@gmail.com';
+const isAdminUser = (user) => user?.role === 'admin';
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function Admin() {
   useEffect(() => {
     base44.auth.me().then(user => {
       setCurrentUser(user);
-      if (user?.email !== ADMIN_EMAIL) navigate('/');
+      if (!isAdminUser(user)) navigate('/');
       setChecking(false);
     }).catch(() => navigate('/'));
   }, []);
@@ -33,19 +33,19 @@ export default function Admin() {
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['admin-users'],
     queryFn: () => base44.entities.User.list(),
-    enabled: !!currentUser && currentUser.email === ADMIN_EMAIL,
+    enabled: isAdminUser(currentUser),
   });
 
   const { data: deals = [] } = useQuery({
     queryKey: ['admin-deals'],
     queryFn: () => base44.entities.Deal.list(),
-    enabled: !!currentUser && currentUser.email === ADMIN_EMAIL,
+    enabled: isAdminUser(currentUser),
   });
 
   const { data: contacts = [] } = useQuery({
     queryKey: ['admin-contacts'],
     queryFn: () => base44.entities.Contact.list(),
-    enabled: !!currentUser && currentUser.email === ADMIN_EMAIL,
+    enabled: isAdminUser(currentUser),
   });
 
   if (checking || isLoading) {
@@ -56,7 +56,7 @@ export default function Admin() {
     );
   }
 
-  if (!currentUser || currentUser.email !== ADMIN_EMAIL) return null;
+  if (!isAdminUser(currentUser)) return null;
 
   const filtered = users.filter(u => {
     const q = search.toLowerCase();
@@ -88,7 +88,7 @@ export default function Admin() {
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Admin Panel</h1>
-          <p className="text-sm text-muted-foreground">Super admin access — {ADMIN_EMAIL}</p>
+          <p className="text-sm text-muted-foreground">Admin panel — manage users, deals, and dispo queue</p>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export default function Admin() {
                     {isBanned && (
                       <Badge className="text-[10px] bg-red-100 text-red-700">🚫 Banned</Badge>
                     )}
-                    {user.email === ADMIN_EMAIL && (
+                    {user.email === currentUser.email && (
                       <Badge className="text-[10px] bg-amber-100 text-amber-700">⭐ You</Badge>
                     )}
                   </div>

@@ -11,6 +11,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 import UpgradeGate from '@/components/UpgradeGate';
 import TrialBanner from '@/components/TrialBanner';
 import OnboardingNameModal from '@/components/OnboardingNameModal';
+import BannedScreen from '@/components/BannedScreen';
+import { decodeReferralCode } from '@/lib/utils';
 
 const TIER_RANK = { basic: 1, wholesale: 2, pro: 3, trial: 3 };
 const ROUTE_REQUIRED_TIER = {
@@ -47,7 +49,7 @@ export default function AppLayout() {
     // Check we don't already have a referral record for this email
     // Decode base64 referral code to get referrer email
     let referrerEmail = null;
-    try { referrerEmail = atob(refCode + '=='); } catch (e) { return; }
+    try { referrerEmail = decodeReferralCode(refCode); } catch (e) { return; }
     if (!referrerEmail || referrerEmail === user.email) return;
 
     import('@/api/base44Client').then(({ base44 }) => {
@@ -68,8 +70,12 @@ export default function AppLayout() {
   const { trialStatus, daysRemaining } = useTrial(user);
   const { tier: subTier, loading: subLoading } = useSubscription(user);
 
+  if (user?.is_banned) {
+    return <BannedScreen />;
+  }
+
   // Show loading while checking subscription
-  if (trialStatus === 'loading' || subLoading) {
+  if ((user && trialStatus === 'loading') || subLoading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -77,11 +83,11 @@ export default function AppLayout() {
     );
   }
 
-  // Always allow pricing and thank-you pages
-  const isPublicRoute = location.pathname === '/pricing' || location.pathname === '/thank-you';
+  const isPublicRoute = location.pathname === '/pricing';
 
-  // Compute effective tier
-  const effectiveTier = subTier || (trialStatus === 'active' ? 'trial' : null);
+  // Compute effective tier (fail-open on trial API errors)
+  const trialActive = trialStatus === 'active' || trialStatus === 'unknown';
+  const effectiveTier = subTier || (trialActive ? 'trial' : null);
 
   if (!effectiveTier && !isPublicRoute) {
     return <TrialExpiredPaywall />;
