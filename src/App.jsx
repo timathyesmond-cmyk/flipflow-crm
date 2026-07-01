@@ -44,11 +44,13 @@ const AuthenticatedApp = () => {
     // auth_required is handled below — show landing page instead of redirecting
   }
 
-  // Unauthenticated: show public landing page at "/", redirect to login for all other paths
+  // Unauthenticated: show public marketing pages
   if (authChecked && !isAuthenticated) {
     return (
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/help" element={<HelpCenter />} />
         <Route path="*" element={<LandingPage />} />
       </Routes>
     );
@@ -83,7 +85,7 @@ const AuthenticatedApp = () => {
 function App() {
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>

@@ -4,8 +4,15 @@ import { base44 } from '@/api/base44Client';
 import {
   HandCoins, LayoutDashboard, Users, Map, Calculator, FileText,
   CheckCircle2, ChevronRight, Play, Zap, Star, Crown, ArrowRight,
-  BarChart3, Mail
+  BarChart3, Mail,
 } from 'lucide-react';
+import LandingNav from '@/components/landing/LandingNav';
+import ContactForm from '@/components/landing/ContactForm';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 const DEMO_SLIDES = [
   {
@@ -135,7 +142,7 @@ const DEMO_SLIDES = [
           <div className="mt-1 text-slate-600">Closing: <span className="font-semibold">30 days from signing</span></div>
           <div className="mt-2 border-t pt-1 text-slate-500">Signature: _______________</div>
         </div>
-        <button className="bg-amber-500 text-white rounded-lg py-1.5 text-xs font-semibold">Export as PDF</button>
+        <button type="button" className="bg-amber-500 text-white rounded-lg py-1.5 text-xs font-semibold">Export as PDF</button>
       </div>
     ),
   },
@@ -192,12 +199,9 @@ export default function Landing() {
   const [playing, setPlaying] = useState(true);
 
   useEffect(() => {
-    // Capture referral code from URL
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref');
-    if (ref) {
-      localStorage.setItem('flipflow_ref', ref);
-    }
+    if (ref) localStorage.setItem('flipflow_ref', ref);
   }, []);
 
   useEffect(() => {
@@ -207,48 +211,30 @@ export default function Landing() {
   }, [playing]);
 
   const handleAuth = () => base44.auth.redirectToLogin('/');
-
   const current = DEMO_SLIDES[slide];
 
   return (
-    <div className="min-h-screen bg-[#0d1b2e] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0d1b2e] text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-300">
 
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0d1b2e]/80 backdrop-blur-lg border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
-              <HandCoins className="w-4 h-4 text-slate-900" />
-            </div>
-            <span className="font-bold text-lg tracking-tight">FlipFlow</span>
-            <span className="text-[10px] text-slate-500 uppercase tracking-widest hidden sm:block ml-1">Wholesale CRM</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={handleAuth} className="text-sm text-slate-300 hover:text-white transition-colors px-3 py-1.5">
-              Log In
-            </button>
-            <button
-              onClick={handleAuth}
-              className="text-sm bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-4 py-1.5 rounded-lg transition-colors"
-            >
-              Start Free Trial
-            </button>
-          </div>
-        </div>
-      </nav>
+      <LandingNav onAuth={handleAuth} />
 
       {/* Hero */}
       <section className="pt-32 pb-16 px-4 sm:px-6 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-5">
-          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-1.5 text-xs text-amber-400 font-medium">
-            <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          className="text-center max-w-3xl mx-auto mb-12 space-y-5"
+        >
+          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-1.5 text-xs text-amber-600 dark:text-amber-400 font-medium">
+            <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
             7-Day Free Trial — No Credit Card Required
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
             The CRM Built for<br />
-            <span className="text-amber-400">Wholesale Real Estate</span>
+            <span className="text-amber-500 dark:text-amber-400">Wholesale Real Estate</span>
           </h1>
-          <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-xl mx-auto">
             Track deals, manage contacts, analyze every offer, and generate contracts — all in one powerful platform.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -260,31 +246,29 @@ export default function Landing() {
             </button>
             <button
               onClick={handleAuth}
-              className="w-full sm:w-auto border border-white/15 hover:border-white/30 text-slate-300 hover:text-white font-medium px-8 py-3.5 rounded-xl text-base transition-colors"
+              className="w-full sm:w-auto border border-slate-300 dark:border-white/15 hover:border-slate-400 dark:hover:border-white/30 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium px-8 py-3.5 rounded-xl text-base transition-colors"
             >
               Already have an account? Log In
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Animated Feature Showcase */}
         <div className="relative max-w-5xl mx-auto">
           <div className="absolute inset-0 bg-amber-500/5 rounded-3xl blur-3xl" />
-          <div className="relative bg-[#0f2035] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative bg-white dark:bg-[#0f2035] border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-2xl">
 
-            {/* Browser chrome */}
-            <div className="bg-[#0a1628] px-4 py-3 flex items-center gap-2 border-b border-white/5">
+            <div className="bg-slate-100 dark:bg-[#0a1628] px-4 py-3 flex items-center gap-2 border-b border-slate-200 dark:border-white/5">
               <div className="w-3 h-3 rounded-full bg-red-500/60" />
               <div className="w-3 h-3 rounded-full bg-amber-500/60" />
               <div className="w-3 h-3 rounded-full bg-emerald-500/60" />
-              <div className="flex-1 mx-4 bg-[#0d1b2e] rounded-md px-3 py-1 text-xs text-slate-500 text-center">
-                flipflowcrm.base44.app
+              <div className="flex-1 mx-4 bg-slate-200 dark:bg-[#0d1b2e] rounded-md px-3 py-1 text-xs text-slate-500 text-center">
+                flipflowcrm.com
               </div>
             </div>
 
             <div className="flex flex-col md:flex-row">
-              {/* Slide nav */}
-              <div className="md:w-44 lg:w-52 bg-[#0a1628] border-r border-white/5 p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-x-visible flex-shrink-0">
+              <div className="md:w-44 lg:w-52 bg-slate-50 dark:bg-[#0a1628] border-b md:border-b-0 md:border-r border-slate-200 dark:border-white/5 p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-x-visible flex-shrink-0">
                 {DEMO_SLIDES.map((s, i) => {
                   const Icon = s.icon;
                   return (
@@ -293,8 +277,8 @@ export default function Landing() {
                       onClick={() => { setSlide(i); setPlaying(false); }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                         slide === i
-                          ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                          : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                          ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                          : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -304,15 +288,14 @@ export default function Landing() {
                 })}
                 <button
                   onClick={() => setPlaying(p => !p)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-slate-600 hover:text-slate-400 transition-colors md:mt-auto"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-400 transition-colors md:mt-auto"
                 >
                   <Play className="w-3.5 h-3.5" />
                   {playing ? 'Pause' : 'Play'}
                 </button>
               </div>
 
-              {/* Mockup area */}
-              <div className="flex-1 p-4 md:p-6 flex flex-col gap-3" style={{ minHeight: '360px' }}>
+              <div className="flex-1 p-4 md:p-6 flex flex-col gap-3 min-h-[320px] sm:min-h-[360px]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={slide}
@@ -322,33 +305,30 @@ export default function Landing() {
                     transition={{ duration: 0.3 }}
                     className="flex flex-col md:flex-row gap-4 flex-1"
                   >
-                    {/* Description */}
                     <div className="md:w-44 lg:w-52 flex flex-col justify-center space-y-3 flex-shrink-0">
-                      <div className="text-xs text-amber-400 font-semibold uppercase tracking-wider">
+                      <div className="text-xs text-amber-600 dark:text-amber-400 font-semibold uppercase tracking-wider">
                         {current.label}
                       </div>
-                      <p className="text-sm text-slate-300 leading-relaxed">{current.description}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{current.description}</p>
                       <button
                         onClick={handleAuth}
-                        className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 font-medium"
+                        className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 font-medium"
                       >
                         Try it free <ChevronRight className="w-3 h-3" />
                       </button>
                     </div>
-                    {/* Screen mockup */}
-                    <div className="flex-1 min-h-[220px]">
+                    <div className="flex-1 min-h-[200px] sm:min-h-[220px]">
                       {current.mockup}
                     </div>
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Progress dots */}
                 <div className="flex items-center justify-center gap-1.5 pt-1">
                   {DEMO_SLIDES.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => { setSlide(i); setPlaying(false); }}
-                      className={`rounded-full transition-all ${i === slide ? 'bg-amber-400 w-5 h-1.5' : 'bg-slate-700 w-1.5 h-1.5 hover:bg-slate-500'}`}
+                      className={`rounded-full transition-all ${i === slide ? 'bg-amber-500 w-5 h-1.5' : 'bg-slate-300 dark:bg-slate-700 w-1.5 h-1.5 hover:bg-slate-400 dark:hover:bg-slate-500'}`}
                     />
                   ))}
                 </div>
@@ -359,40 +339,63 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-16 px-4 sm:px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-10 space-y-2">
+      <section id="features" className="py-16 px-4 sm:px-6 max-w-7xl mx-auto scroll-mt-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={fadeUp}
+          className="text-center mb-10 space-y-2"
+        >
           <h2 className="text-2xl sm:text-3xl font-bold">Everything you need to close more deals</h2>
-          <p className="text-slate-400 text-sm">Built specifically for real estate wholesalers — not generic CRM bloatware.</p>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURES.map(f => {
+          <p className="text-slate-600 dark:text-slate-400 text-sm">Built specifically for real estate wholesalers — not generic CRM bloatware.</p>
+        </motion.div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {FEATURES.map((f, i) => {
             const Icon = f.icon;
             return (
-              <div key={f.title} className="bg-[#0f2035] border border-white/8 rounded-xl p-4 space-y-2 hover:border-amber-500/30 transition-colors">
+              <motion.div
+                key={f.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-40px' }}
+                variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { duration: 0.4, delay: i * 0.05 } } }}
+                className="bg-white dark:bg-[#0f2035] border border-slate-200 dark:border-white/8 rounded-xl p-4 space-y-2 hover:border-amber-500/30 transition-colors shadow-sm dark:shadow-none"
+              >
                 <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-amber-400" />
+                  <Icon className="w-4 h-4 text-amber-500 dark:text-amber-400" />
                 </div>
                 <div className="font-semibold text-sm">{f.title}</div>
-                <div className="text-xs text-slate-400 leading-relaxed">{f.desc}</div>
-              </div>
+                <div className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{f.desc}</div>
+              </motion.div>
             );
           })}
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="py-16 px-4 sm:px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-10 space-y-2">
+      <section id="pricing" className="py-16 px-4 sm:px-6 max-w-7xl mx-auto scroll-mt-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={fadeUp}
+          className="text-center mb-10 space-y-2"
+        >
           <h2 className="text-2xl sm:text-3xl font-bold">Simple pricing, no surprises</h2>
-          <p className="text-slate-400 text-sm">All plans start with a 7-day free trial. Cancel anytime.</p>
-        </div>
+          <p className="text-slate-600 dark:text-slate-400 text-sm">All plans start with a 7-day free trial. Cancel anytime.</p>
+        </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
-          {PLANS.map(plan => {
+          {PLANS.map((plan, i) => {
             const Icon = plan.icon;
             return (
-              <div
+              <motion.div
                 key={plan.name}
-                className={`relative bg-[#0f2035] border border-white/10 rounded-2xl p-5 flex flex-col gap-4 ${plan.ringClass}`}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-40px' }}
+                variants={{ ...fadeUp, visible: { ...fadeUp.visible, transition: { duration: 0.4, delay: i * 0.1 } } }}
+                className={`relative bg-white dark:bg-[#0f2035] border border-slate-200 dark:border-white/10 rounded-2xl p-5 flex flex-col gap-4 shadow-sm dark:shadow-none ${plan.ringClass}`}
               >
                 {plan.popular && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full bg-amber-500 text-slate-900 whitespace-nowrap">
@@ -409,41 +412,67 @@ export default function Landing() {
                 </div>
                 <ul className="space-y-1.5 flex-1">
                   {plan.features.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-xs text-slate-300">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />{f}
+                    <li key={f} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />{f}
                     </li>
                   ))}
                 </ul>
                 <button
                   onClick={handleAuth}
-                  className="w-full py-2 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 transition-colors"
+                  className="w-full py-2 rounded-lg text-sm font-semibold bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 transition-colors"
                 >
                   Start Free Trial
                 </button>
-              </div>
+              </motion.div>
             );
           })}
         </div>
       </section>
 
+      {/* Contact */}
+      <section id="contact" className="py-16 px-4 sm:px-6 max-w-7xl mx-auto scroll-mt-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={fadeUp}
+          className="max-w-xl mx-auto"
+        >
+          <div className="text-center mb-8 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold">Get in touch</h2>
+            <p className="text-slate-600 dark:text-slate-400 text-sm">
+              Questions about FlipFlow? We'd love to hear from you.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-[#0f2035] border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm dark:shadow-none">
+            <ContactForm />
+          </div>
+        </motion.div>
+      </section>
+
       {/* Final CTA */}
       <section className="py-20 px-4 text-center">
-        <div className="max-w-xl mx-auto space-y-5">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="max-w-xl mx-auto space-y-5"
+        >
           <h2 className="text-3xl font-extrabold">Ready to flip more deals?</h2>
-          <p className="text-slate-400">Join wholesalers using FlipFlow to track, analyze, and close faster.</p>
+          <p className="text-slate-600 dark:text-slate-400">Join wholesalers using FlipFlow to track, analyze, and close faster.</p>
           <button
             onClick={handleAuth}
             className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-10 py-4 rounded-xl text-base transition-all hover:scale-105 inline-flex items-center gap-2"
           >
             Start Free for 7 Days <ArrowRight className="w-4 h-4" />
           </button>
-          <p className="text-xs text-slate-600 mt-2">No credit card required · Cancel anytime</p>
-        </div>
+          <p className="text-xs text-slate-500 dark:text-slate-600 mt-2">No credit card required · Cancel anytime</p>
+        </motion.div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-6 px-4 text-center text-xs text-slate-600">
-        2026 FlipFlow Wholesale CRM. All rights reserved.
+      <footer className="border-t border-slate-200 dark:border-white/5 py-6 px-4 text-center text-xs text-slate-500 dark:text-slate-600">
+        © 2026 FlipFlow Wholesale CRM. All rights reserved.
       </footer>
     </div>
   );

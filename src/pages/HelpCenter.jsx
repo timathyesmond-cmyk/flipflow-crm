@@ -128,7 +128,7 @@ export default function HelpCenter() {
   }, {});
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 p-6">
+    <div className="min-h-screen bg-background max-w-5xl mx-auto space-y-10 p-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Help Center</h1>

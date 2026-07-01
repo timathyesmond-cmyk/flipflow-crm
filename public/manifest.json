@@ -1,0 +1,21 @@
+{
+  "name": "FlipFlow CRM",
+  "short_name": "FlipFlow",
+  "description": "Wholesale real estate CRM for tracking deals, contacts, and closing faster.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1b2e",
+  "theme_color": "#0d1b2e",
+  "icons": [
+    {
+      "src": "https://media.base44.com/images/public/69fe74917a6dbfced544fabf/9f41b86a3_logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://media.base44.com/images/public/69fe74917a6dbfced544fabf/9f41b86a3_logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
