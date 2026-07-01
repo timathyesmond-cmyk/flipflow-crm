@@ -25,7 +25,11 @@
     },
     "trial_start_date": {
       "type": "string",
-      "description": "ISO timestamp of when the 7-day trial started"
+      "description": "ISO timestamp of when the 7-day trial started (set server-side only via getTrialStatus)"
+    },
+    "trial_ends_at": {
+      "type": "string",
+      "description": "ISO timestamp when the trial expires (set server-side only via getTrialStatus)"
     },
     "is_banned": {
       "type": "boolean",

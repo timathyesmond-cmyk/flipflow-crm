@@ -9,7 +9,7 @@ const STEPS = [
     icon: LayoutDashboard,
     color: 'from-blue-500 to-indigo-600',
     badge: 'Start Here',
-    title: 'Welcome to DealFlow CRM 👋',
+    title: 'Welcome to FlipFlow CRM 👋',
     description: 'Your command center for wholesale real estate. Everything you need to find, track, and close deals — all in one place.',
     features: [
       'Live pipeline overview with deal counts & profit stats',
@@ -106,7 +106,7 @@ const STEPS = [
     color: 'from-yellow-500 to-amber-500',
     badge: 'Community',
     title: 'Share Your Ideas',
-    description: 'Have a suggestion to make DealFlow better? Submit it on the Suggestions page and vote on ideas from other users.',
+    description: 'Have a suggestion to make FlipFlow better? Submit it on the Suggestions page and vote on ideas from other users.',
     features: [
       'Submit feature requests, improvements, or bug reports',
       'Upvote ideas you want to see built',

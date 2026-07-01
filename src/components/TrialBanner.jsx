@@ -14,7 +14,7 @@ export default function TrialBanner({ daysRemaining }) {
         </p>
       </div>
       <a
-        href="mailto:support@example.com?subject=DealFlow%20Upgrade"
+        href="mailto:support@flipflowcrm.com?subject=FlipFlow%20Upgrade"
         className="text-xs font-semibold text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100 underline underline-offset-2 whitespace-nowrap"
       >
         Upgrade now

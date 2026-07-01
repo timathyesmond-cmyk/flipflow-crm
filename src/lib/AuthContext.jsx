@@ -101,17 +101,12 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingAuth(false);
       setAuthChecked(true);
 
-      // Track new sign-ups and send welcome email (only once per user)
+      // Track new sign-ups (welcome email is sent from OnboardingNameModal)
       const trackingKey = `signed_up_tracked_${currentUser.id}`;
       if (!localStorage.getItem(trackingKey)) {
         base44.analytics.track({
           eventName: "user_signed_up",
           properties: { email: currentUser.email }
-        });
-        base44.integrations.Core.SendEmail({
-          to: currentUser.email,
-          subject: "Welcome to DealFlow CRM! 🏡",
-          body: `Hi ${currentUser.full_name || "there"},\n\nWelcome to DealFlow CRM! We're excited to have you on board.\n\nHere's what you can do to get started:\n• Add your first deal from the Deals page\n• Track your pipeline on the Dashboard\n• Use the Calculator to analyze deals\n• Store your buyers & sellers in Contacts\n\nIf you have any questions, just reply to this email — we're happy to help!\n\nHappy Wholesaling,\nThe DealFlow Team`
         });
         localStorage.setItem(trackingKey, "true");
       }

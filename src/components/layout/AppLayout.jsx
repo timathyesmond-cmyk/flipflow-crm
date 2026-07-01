@@ -102,7 +102,7 @@ export default function AppLayout() {
         <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 rounded-lg hover:bg-muted flex-shrink-0">
           <Menu className="w-5 h-5" />
         </button>
-        <span className="font-semibold text-sm flex-shrink-0">DealFlow</span>
+        <span className="font-semibold text-sm flex-shrink-0">FlipFlow</span>
         <GlobalSearch className="flex-1" />
       </div>
 
