@@ -101,7 +101,7 @@ export default function Suggestions() {
             <Lightbulb className="w-6 h-6 text-amber-500" /> Suggestions
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Vote on ideas or submit your own to help shape the future of DealFlow.
+            Vote on ideas or submit your own to help shape the future of FlipFlow.
           </p>
         </div>
         <Button className="gap-2 self-start sm:self-auto" onClick={() => setShowForm(true)}>

@@ -1,43 +1,43 @@
 import { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 
-const TRIAL_DAYS = 7;
-
 export function useTrial(user) {
-  const [trialStatus, setTrialStatus] = useState('loading'); // 'loading' | 'active' | 'expired'
+  const [trialStatus, setTrialStatus] = useState('loading');
   const [daysRemaining, setDaysRemaining] = useState(null);
 
   useEffect(() => {
-    if (!user) return;
-
-    // Admins and gifted members are never gated
-    if (user.role === 'admin' || user.gifted_membership === true) {
-      setTrialStatus('active');
+    if (!user) {
+      setTrialStatus('idle');
+      setDaysRemaining(null);
       return;
     }
 
-    const initTrial = async () => {
-      let trialStart = user.trial_start_date;
+    if (user.role === 'admin' || user.gifted_membership === true) {
+      setTrialStatus('active');
+      setDaysRemaining(null);
+      return;
+    }
 
-      // First-time user: stamp the trial start date
-      if (!trialStart) {
-        const today = new Date().toISOString();
-        await base44.auth.updateMe({ trial_start_date: today });
-        trialStart = today;
+    let cancelled = false;
+
+    const fetchTrialStatus = async () => {
+      try {
+        const res = await base44.functions.invoke('getTrialStatus', {});
+        if (cancelled) return;
+
+        const data = res.data || {};
+        setDaysRemaining(data.daysRemaining ?? null);
+        setTrialStatus(data.trialStatus === 'active' ? 'active' : 'expired');
+      } catch (err) {
+        console.error('Failed to fetch trial status:', err);
+        if (!cancelled) setTrialStatus('unknown');
       }
-
-      const start = new Date(trialStart);
-      const now = new Date();
-      const diffMs = now - start;
-      const diffDays = diffMs / (1000 * 60 * 60 * 24);
-      const remaining = Math.max(0, Math.ceil(TRIAL_DAYS - diffDays));
-
-      setDaysRemaining(remaining);
-      setTrialStatus(remaining > 0 ? 'active' : 'expired');
     };
 
-    initTrial();
-  }, [user]);
+    fetchTrialStatus();
+
+    return () => { cancelled = true; };
+  }, [user?.id, user?.email, user?.role, user?.gifted_membership]);
 
   return { trialStatus, daysRemaining };
 }

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useTrial } from '@/hooks/useTrial';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +50,7 @@ function fmt(n) {
 export default function Dispo() {
   const [user, setUser] = useState(null);
   const { tier, loading: subLoading } = useSubscription(user);
+  const { trialStatus } = useTrial(user);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
@@ -63,30 +66,37 @@ export default function Dispo() {
     enabled: !!user,
   });
 
-  const isSubscribed = !!tier || user?.role === 'admin' || user?.gifted_membership;
+  const isSubscribed = !!tier || trialStatus === 'active' || trialStatus === 'unknown'
+    || user?.role === 'admin' || user?.gifted_membership;
   const freeSlotUsed = myDeals.length > 0;
-  const canSubmit = isSubscribed; // subscribed users can always submit; first deal is free for everyone
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    await base44.entities.DispoDeal.create({
-      ...form,
-      submitter_email: user.email,
-      submitter_name: user.full_name || user.email,
-      bedrooms: form.bedrooms ? Number(form.bedrooms) : undefined,
-      bathrooms: form.bathrooms ? Number(form.bathrooms) : undefined,
-      sqft: form.sqft ? Number(form.sqft) : undefined,
-      asking_price: form.asking_price ? Number(form.asking_price) : undefined,
-      arv: form.arv ? Number(form.arv) : undefined,
-      repair_estimate: form.repair_estimate ? Number(form.repair_estimate) : undefined,
-      assignment_fee: form.assignment_fee ? Number(form.assignment_fee) : undefined,
-      status: 'pending',
-    });
-    queryClient.invalidateQueries({ queryKey: ['dispo-my-deals'] });
-    setShowForm(false);
-    setForm(EMPTY_FORM);
-    setSubmitting(false);
+    try {
+      await base44.entities.DispoDeal.create({
+        ...form,
+        submitter_email: user.email,
+        submitter_name: user.full_name || user.email,
+        bedrooms: form.bedrooms ? Number(form.bedrooms) : undefined,
+        bathrooms: form.bathrooms ? Number(form.bathrooms) : undefined,
+        sqft: form.sqft ? Number(form.sqft) : undefined,
+        asking_price: form.asking_price ? Number(form.asking_price) : undefined,
+        arv: form.arv ? Number(form.arv) : undefined,
+        repair_estimate: form.repair_estimate ? Number(form.repair_estimate) : undefined,
+        assignment_fee: form.assignment_fee ? Number(form.assignment_fee) : undefined,
+        status: 'pending',
+      });
+      queryClient.invalidateQueries({ queryKey: ['dispo-my-deals'] });
+      setShowForm(false);
+      setForm(EMPTY_FORM);
+      toast.success('Deal submitted for dispo review!');
+    } catch (err) {
+      console.error('Dispo submit failed:', err);
+      toast.error('Failed to submit deal. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));

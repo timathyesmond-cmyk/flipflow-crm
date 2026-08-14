@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, HandCoins, Users, Map, X, LogOut, Calculator as CalculatorIcon, Settings, Lightbulb, Shield, Building2, HelpCircle, Gift, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 import { cn } from '@/lib/utils';
 import GlobalSearch from './GlobalSearch';
 import StaleDealsNotification from '@/components/notifications/StaleDealsNotification';
@@ -21,20 +22,13 @@ const navItems = [
   { label: 'Settings', path: '/settings', icon: Settings },
 ];
 
-const ADMIN_EMAIL = 'timathyesmond@gmail.com';
-
 const TIER_LABELS = { basic: 'Basic', wholesale: 'Wholesale', pro: 'Pro', trial: 'Trial' };
 const TIER_COLORS = { basic: 'text-blue-400', wholesale: 'text-amber-400', pro: 'text-purple-400', trial: 'text-emerald-400' };
 
 export default function Sidebar({ isOpen, setIsOpen, effectiveTier }) {
   const location = useLocation();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    base44.auth.me().then(user => {
-      if (user?.email === ADMIN_EMAIL) setIsAdmin(true);
-    }).catch(() => {});
-  }, []);
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   return (
     <>
